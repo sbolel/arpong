@@ -7,8 +7,6 @@ enum { DEVICE = 0 };
 
 // Buffer into which video frames will be copied.
 int frame_buffer[WIDTH * HEIGHT];
-
-static int nu_Anim_isOn = 1;        // ==1 to run animation, ==0 to pause.
 int isCleared = 1;                  // toggle animation's screen-clear
 
 // Set up the image capture library ESCAPI
@@ -69,7 +67,7 @@ int main(int argc, char** argv) {
 	// while(main_loop_iter()) { }
 
 	glutMainLoop();	                // enter GLUT's event-handler; NEVER EXITS.
-  runAnimTimer(1);                // start our animation loop.
+	runAnimTimer(1);                // start our animation loop.
 
 	// deinitCapture(DEVICE);
 }
@@ -77,10 +75,8 @@ int main(int argc, char** argv) {
 // OpenGL display function, called whenever a new frame is requested
 void glDisplay() {
 
-    if(isCleared==1)
-    {   // toggled by 'c' or 'C' key, ==1 shows robot, ==0 shows tool trail.
+    if(isCleared==1) {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-                                // clear the color and depth buffers
     }
 
 	// vertices for simple textured-quad rendering
@@ -93,10 +89,10 @@ void glDisplay() {
 
 	glPushMatrix();
 	glScaled(-1.0, -1.0, 0.0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, frame_buffer);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, frame_buffer);
 
-	glInterleavedArrays(GL_T2F_V3F, 0, vertices);
-	glDrawArrays(GL_QUADS, 0, 4);
+	// glInterleavedArrays(GL_T2F_V3F, 0, vertices);
+	// glDrawArrays(GL_QUADS, 0, 4);
 
 	glPopMatrix();
 
@@ -122,30 +118,29 @@ int xpos,ypos;  // mouse position in coords with origin at lower left.
 	switch(key)
 	{
     case 'r':
-    case 'R':       // toggle 'isCleared' to enable/disable screen clearing
-                    // in myDisplay before screen redrawing.
-        if(isCleared==0) isCleared = 1;
-                    else isCleared = 0;
-        break;
+    case 'R':             // toggle 'isCleared' to enable/disable screen clearing
+      if(isCleared==0) isCleared = 1;
+      else isCleared = 0;
+      break;
     case 'p':
-    case 'P':       // Toggle animation on/off.
-        if(nu_Anim_isOn ==1) runAnimTimer(0);
-                        else runAnimTimer(1);
-        break;
-		case ' ':		// User pressed the spacebar.
-		case 27:		// User pressed the 'Esc'  key...
-		case 'Q':		// User pressed the 'Q' key...
+    case 'P':             // Toggle animation on/off.
+      if(nu_Anim_isOn ==1) runAnimTimer(0);
+      else runAnimTimer(1);
+      break;
+		case ' ':		          // User pressed the spacebar.
+		case 27:		          // User pressed the 'Esc'  key...
+		case 'Q':             // User pressed the 'Q' key...
 		case 'q':
-			exit(0);    // Done! quit the program.
+		  exit(0);            // Done! quit the program.
 			break;
     default:
-      cout << "that's not a valid key!\n";
+      cout << "Invalid key pressed!\n";
       glColor3d(0.0, 1.0, 1.0);// And Cyan-colored text on-screen:
     	drawText2D(helv18, 2.75, -4.75,"Wrong Key Pressed");
       //===============DRAWING DONE.
-      glFlush();	        // do any and all pending openGL rendering.
-      glutSwapBuffers();	// For double-buffering: show what we drew.
     	break;
+    glFlush();          // do any and all pending openGL rendering.
+    glutSwapBuffers();  // For double-buffering: show what we drew.
 	}
 }
 
@@ -227,21 +222,3 @@ void glHidden (int isVisible)
     else runAnimTimer(0);                           // No. Stop animating.
 }
 
-void drawHelpText(void)
-{
-  glPushMatrix();
-      glLoadIdentity();
-      glScaled(0.2,0.2,0.2);
-      glColor3d(0.0, 1.0, 0.0);	// And cyan-colored text on-screen:
-      drawText2D(helv18, -5.0, 4.0,"ARPong HELP (Press F1 to Resume)");
-      drawText2D(helv12, -5.0, 4.0-0.2,"________________________________");
-      drawText2D(helv12, -5.0, 4.0-0.6,"Sample help text");
-      drawText2D(helv12, -5.0, 4.0-0.9,"Sample help text");
-      drawText2D(helv12, -5.0, 4.0-1.2,"Sample help text");
-      drawText2D(helv12, -5.0, 4.0-1.5,"Sample help text");
-      drawText2D(helv12, -5.0, 4.0-1.8,"Sample help text");
-      drawText2D(helv12, -5.0, 4.0-2.1,"Sample help text");
-                  if(nu_Anim_isOn ==1) runAnimTimer(0);
-                  else runAnimTimer(1);
-  glPopMatrix();
-}

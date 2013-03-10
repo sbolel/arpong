@@ -6,9 +6,12 @@
 #include <GL/freeglut.h>
 #include <escapi.h>
 
+#include "lib/CTransRot.h"
+
 // The width and height we are going to work at.  ESCAPI automatically scales
 // larger images down to this.
 enum { WIDTH = 800, HEIGHT = 600 };
+static int nu_Anim_isOn = 1;        // ==1 to run animation, ==0 to pause.
 
 // font strings for drawText2D();
 // (use as value for pFont argument)
@@ -35,6 +38,22 @@ int getDisplayWidth(void)  { return WIDTH; }
 
 void drawText2D(void *pFont, double x0, double y0, const char *pString);
 
-void drawHelpText(void);
 
-
+void drawHelpText(void)
+{
+  glPushMatrix();
+      glLoadIdentity();
+      glScaled(0.2,0.2,0.2);
+      glColor3d(0.0, 1.0, 0.0); // And cyan-colored text on-screen:
+      drawText2D(helv18, -5.0, 4.0,"ARPong HELP (Press F1 to Resume)");
+      drawText2D(helv12, -5.0, 4.0-0.2,"________________________________");
+      drawText2D(helv12, -5.0, 4.0-0.6,"Sample help text");
+      drawText2D(helv12, -5.0, 4.0-0.9,"Sample help text");
+      drawText2D(helv12, -5.0, 4.0-1.2,"Sample help text");
+      drawText2D(helv12, -5.0, 4.0-1.5,"Sample help text");
+      drawText2D(helv12, -5.0, 4.0-1.8,"Sample help text");
+      drawText2D(helv12, -5.0, 4.0-2.1,"Sample help text");
+                  if(nu_Anim_isOn ==1) runAnimTimer(0);
+                  else runAnimTimer(1);
+  glPopMatrix();
+}
