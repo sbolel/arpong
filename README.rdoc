@@ -1,0 +1,8 @@
+## Problems:
+* Setting up frustrum and lookat properly
+
+## To-Do:
+* Network two computers
+* Set player 1 as master, player 2 as slave
+* Grab enemy coordinates from partner and update
+* Send ball coordinates from master to slave, update slave
