@@ -112,7 +112,7 @@ void glDisplay() {
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glLoadIdentity ();
   gluLookAt(  0.0f, 0.0f, -2.0f,
-      0.0f, 0.0f,  25.0f,
+      0.0f, 0.0f,  30.0f,
       0.0f, 1.0f,  2.0f);
   // vertices for simple textured-quad rendering
   const struct { float tu, tv; float x, y, z; } vertices[] = {
@@ -124,6 +124,7 @@ void glDisplay() {
 
 // Movement and Rotation
   drawScene();
+  drawAxes(0);
   glPushMatrix();
     charPlayer.apply_T_Matrix();
   	// glScaled(-1.0, -1.0, 0.0);
@@ -133,7 +134,7 @@ void glDisplay() {
     drawAxes(0);
 	glPopMatrix();
   glPushMatrix();
-    glTranslated(0.0,0.0,50.0);
+    glTranslated(0.0,0.0,30.0);
     glRotated(180, 0.0,1.0,0.0);
     charEnemy.apply_T_Matrix();
     // glScaled(-1.0, -1.0, 0.0);
@@ -143,10 +144,11 @@ void glDisplay() {
     drawAxes(0);
   glPopMatrix();
   glPushMatrix();
-    glTranslated(0.0,0.0,25.0);
+    glTranslated(0.0,0.0,13.0);
     glColor3f(0.0, 1.0, 0.25);
-    glutSolidSphere(1.0, 10, 10);
+    glutSolidSphere(0.5, 20, 20);
   glPopMatrix();
+
 	glFlush();	                // do any and all pending openGL rendering.
 	glutSwapBuffers();
 }
@@ -344,18 +346,18 @@ void drawAxes(int colr){
 void drawScene(void) {
   glPushMatrix();
     glBegin(GL_QUADS);
-    glColor3f(0.0, 0.25, 0.8);
-      glVertex3f( 20.0, 10.0, 0.0);
-      glVertex3f( 20.0, -10.0, 0.0);
-      glVertex3f( 20.0, -10.0, 80.0);
-      glVertex3f( 20.0, 10.0, 80.0);
+      glColor3f(0.0, 0.25, 0.8);
+      glVertex3f( 5.0, 2.0, 0.0);
+      glVertex3f( 5.0, -2.0, 0.0);
+      glVertex3f( 5.0, -2.0, 30.0);
+      glVertex3f( 5.0, 2.0, 30.0);
     glEnd();
     glBegin(GL_QUADS);
-    glColor3f(0.0, 0.25, 0.8);
-      glVertex3f( -20.0, 10.0, 0.0);
-      glVertex3f( -20.0, -10.0, 0.0);
-      glVertex3f( -20.0, -10.0, 80.0);
-      glVertex3f( -20.0, 10.0, 80.0);
+      glColor3f(0.0, 0.25, 0.8);
+      glVertex3f( -5.0, 2.0, 0.0);
+      glVertex3f( -5.0, -2.0, 0.0);
+      glVertex3f( -5.0, -2.0, 30.0);
+      glVertex3f( -5.0, 2.0, 30.0);
     glEnd();
     // glBegin(GL_QUADS);
     //   glVertex3f( 10.0, 6.0, -50.0);
