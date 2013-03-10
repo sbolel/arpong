@@ -71,8 +71,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CTransRot.cpp" />
     <ClCompile Include="escapi.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="my_vecmat.cpp" />
+    <ClCompile Include="objectsLightsMats.cpp" />
+    <ClCompile Include="textfileProg.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

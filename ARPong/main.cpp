@@ -9,6 +9,9 @@ enum { DEVICE = 0 };
 int frame_buffer[WIDTH * HEIGHT];
 int isCleared = 1;                  // toggle animation's screen-clear
 
+CTransRot charPlayer(1);       // Mouse/Keyboard settings for camera coord system.
+CTransRot charEnemy(2);       // Mouse/Keyboard settings for camera coord system.
+
 // Set up the image capture library ESCAPI
 void setup_escapi() {
 	// Initialize the DLL and ask how many webcams it found
@@ -47,76 +50,108 @@ int main(int argc, char** argv) {
 	// setup_escapi();
 
 	glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutCreateWindow("ARPong");
-	glutDisplayFunc(glDisplay);
+
+  glutDisplayFunc(glDisplay);
+  glutIdleFunc(glDisplay);        // GLUT idle function
 	glutReshapeFunc(glReshape);
 	glutKeyboardFunc(glKeyboard);
+  glutKeyboardUpFunc(glKeyUpFunc);// keystate function
 	glutSpecialFunc(glKeySpecial);
+  glutIgnoreKeyRepeat(true);
+  glEnable (GL_DEPTH_TEST);       // enable DEPTH test
 
 	GLuint texture;
-	glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+  glClearColor(0.03, 0.03, 0.2, 0.0);     // Dark blue background set
 	glEnable(GL_TEXTURE_2D);
-	glViewport(0, 0, WIDTH, HEIGHT);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// keep running until the video source quits or someone closes us
-	// while(main_loop_iter()) { }
-
-	glutMainLoop();	                // enter GLUT's event-handler; NEVER EXITS.
 	runAnimTimer(1);                // start our animation loop.
 
+  // keep running until the video source quits or someone closes us
+  // while(main_loop_iter()) { }
+
+  glutMainLoop();                 // enter GLUT's event-handler; NEVER EXITS.
+
 	// deinitCapture(DEVICE);
+  return 0;                       // SUCCESSFUL exit, C++ Compatibility
 }
 
-// OpenGL display function, called whenever a new frame is requested
-void glDisplay() {
-
-    if(isCleared==1) {
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    }
-
-	// vertices for simple textured-quad rendering
-	const struct { float tu, tv; float x, y, z; } vertices[] = {
-		{ 0.0f, 0.0f, -1.0f,-1.0f, 0.0f },
-		{ 1.0f, 0.0f,  1.0f,-1.0f, 0.0f },
-		{ 1.0f, 1.0f,  1.0f, 1.0f, 0.0f },
-		{ 0.0f, 1.0f, -1.0f, 1.0f, 0.0f }
-	};
-
-	glPushMatrix();
-	glScaled(-1.0, -1.0, 0.0);
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, frame_buffer);
-
-	// glInterleavedArrays(GL_T2F_V3F, 0, vertices);
-	// glDrawArrays(GL_QUADS, 0, 4);
-
-	glPopMatrix();
-
-	glFlush();	                // do any and all pending openGL rendering.
-	glutSwapBuffers();
-}
 
 void glReshape( int width, int height )
 //------------------------------------------------------------------------------
 {
   glViewport((WIDTH-HEIGHT)/2,0, HEIGHT, HEIGHT);
-	glutPostRedisplay();			// request redraw--we changed window size!
+  glMatrixMode(GL_PROJECTION);  // select camera-setting matrix stack
+  glLoadIdentity();             // clear it: identity matrix.
+  gluPerspective (60, (GLfloat)WIDTH / (GLfloat)HEIGHT, 1.0, 1000.0);
+  glMatrixMode(GL_MODELVIEW);        //return to modelview coords
+  glutPostRedisplay();      // request redraw--we changed window size!
 }
+
+
+// OpenGL display function, called whenever a new frame is requested
+void glDisplay() {
+  movePlayer();
+  moveEnemy();
+  glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+  glLoadIdentity ();
+  gluLookAt(  0.0f, 0.0f, -2.0f,
+      0.0f, 0.0f,  25.0f,
+      0.0f, 1.0f,  2.0f);
+  // vertices for simple textured-quad rendering
+  const struct { float tu, tv; float x, y, z; } vertices[] = {
+    { 0.0f, 0.0f, -1.0f,-1.0f, 0.0f },
+    { 1.0f, 0.0f,  1.0f,-1.0f, 0.0f },
+    { 1.0f, 1.0f,  1.0f, 1.0f, 0.0f },
+    { 0.0f, 1.0f, -1.0f, 1.0f, 0.0f }
+  };
+
+// Movement and Rotation
+  drawScene();
+  glPushMatrix();
+    charPlayer.apply_T_Matrix();
+  	// glScaled(-1.0, -1.0, 0.0);
+  	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, frame_buffer);
+  	// glInterleavedArrays(GL_T2F_V3F, 0, vertices);
+  	// glDrawArrays(GL_QUADS, 0, 4);
+    drawAxes(0);
+	glPopMatrix();
+  glPushMatrix();
+    glTranslated(0.0,0.0,50.0);
+    glRotated(180, 0.0,1.0,0.0);
+    charEnemy.apply_T_Matrix();
+    // glScaled(-1.0, -1.0, 0.0);
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, frame_buffer);
+    // glInterleavedArrays(GL_T2F_V3F, 0, vertices);
+    // glDrawArrays(GL_QUADS, 0, 4);
+    drawAxes(0);
+  glPopMatrix();
+
+	glFlush();	                // do any and all pending openGL rendering.
+	glutSwapBuffers();
+}
+
 
 void glKeyboard(unsigned char key, int xw, int yw)
 //------------------------------------------------------------------------------
 {
-int xpos,ypos;  // mouse position in coords with origin at lower left.
+  key_state[key] = true;
+  int xpos,ypos;  // mouse position in coords with origin at lower left.
 
-    xpos = xw;
-    ypos = getDisplayHeight() - yw; //(window system puts origin at UPPER left)
+  xpos = xw;
+  ypos = getDisplayHeight() - yw; //(window system puts origin at UPPER left)
 
 	switch(key)
 	{
+    case'a':
+    case's':
+    case'd':
+    case'w':
+      break;
     case 'r':
     case 'R':             // toggle 'isCleared' to enable/disable screen clearing
       if(isCleared==0) isCleared = 1;
@@ -139,9 +174,10 @@ int xpos,ypos;  // mouse position in coords with origin at lower left.
     	drawText2D(helv18, 2.75, -4.75,"Wrong Key Pressed");
       //===============DRAWING DONE.
     	break;
-    glFlush();          // do any and all pending openGL rendering.
-    glutSwapBuffers();  // For double-buffering: show what we drew.
 	}
+}
+void glKeyUpFunc(unsigned char key, int x, int y){
+    key_state[key] = false;
 }
 
 void glKeySpecial(int key, int xw, int yw)
@@ -152,17 +188,16 @@ int xpos,ypos;      // mouse position in coords with origin at lower left.
     ypos = getDisplayHeight() - yw; //(window system puts origin at UPPER left)
 	switch(key)
 	{
-        case GLUT_KEY_F1:       // DISPLAY HELP CONTENTS
-                cout << "Help File (F1 Key Pressed)\n";
-               	drawHelpText();
-                cout << "\nHELP FILE DISPLAYED!\n";
-            break;
+    case GLUT_KEY_F1:       // DISPLAY HELP CONTENTS
+      cout << "\nARPong Help File (Press F1 to Resume)\n";
+      cout << "----------------------------\n";   // Display HELP contents
+      cout << "() \n";
+      cout << "() \n";
+      break;
 		default:
 			cout << "Special Key Pressed, Value: "<< (int)key << "\n)";
 			break;
 	}
-    glFlush();	        // do any and all pending openGL rendering.
-    glutSwapBuffers();	// For double-buffering: show what we drew.
 }
 
 void drawText2D(void *pFont, double x0, double y0, const char *pString)
@@ -222,3 +257,100 @@ void glHidden (int isVisible)
     else runAnimTimer(0);                           // No. Stop animating.
 }
 
+void movePlayer(void){
+float yaw = charPlayer.y_rot;
+  if(key_state['a'] == true) {
+    charPlayer.x_pos += moveSpeed;
+  }
+  if(key_state['d'] == true) {
+    charPlayer.x_pos -= moveSpeed;
+  }
+  if(key_state['w'] == true) {
+    charPlayer.y_pos += moveSpeed;
+  }
+  if(key_state['s'] == true) {
+    charPlayer.y_pos -= moveSpeed;
+  }
+  if(key_state['z'] == true) {
+    charPlayer.z_pos += moveSpeed;
+  }
+  if(key_state['x'] == true) {
+    charPlayer.z_pos -= moveSpeed;
+  }
+}
+
+void moveEnemy(void){
+float yaw = charEnemy.y_rot;
+  if(key_state['f'] == true) {
+    charEnemy.x_pos -= moveSpeed;
+  }
+  if(key_state['h'] == true) {
+    charEnemy.x_pos += moveSpeed;
+  }
+  if(key_state['t'] == true) {
+    charEnemy.y_pos += moveSpeed;
+  }
+  if(key_state['g'] == true) {
+    charEnemy.y_pos -= moveSpeed;
+  }
+  if(key_state['z'] == true) {
+    charEnemy.z_pos += moveSpeed;
+  }
+  if(key_state['x'] == true) {
+    charEnemy.z_pos -= moveSpeed;
+  }
+}
+
+void drawAxes(int colr){
+//------------------------------------------------------------------------------
+// When 'colr' = 0 draws red,grn,blu coordinate system axes;
+// Otherwise draws       cyan,magenta,yellow axes
+  glDisable(GL_LIGHTING);//-----------------Draw axes:
+    glBegin(GL_LINES);      // start drawing lines:
+            if(colr) glColor3f( 0.0, 1.0, 1.0); // cyan or
+            else     glColor3f( 1.0, 0.0, 0.0); // Red X axis
+      glVertex3f( 0.0, 0.0, 0.0);
+      glVertex3f( 1.0, 0.0, 0.0);
+
+            if(colr) glColor3f( 1.0, 0.0, 1.0); // Magenta or
+            else     glColor3f( 0.0, 1.0, 0.0); // Green Y axis
+      glVertex3f( 0.0, 0.0, 0.0);
+      glVertex3f( 0.0, 1.0, 0.0);
+
+            if(colr) glColor3f( 1.0, 1.0, 0.0); // Yellow or
+            else     glColor3f( 0.0, 0.0, 1.0); // Blue Z axis
+      glVertex3f( 0.0, 0.0, 0.0);
+      glVertex3f( 0.0, 0.0, 1.0);
+    glEnd();          // end drawing lines
+  glEnable(GL_LIGHTING);// ------------DONE drawing axes.
+}
+
+void drawScene(void) {
+  glPushMatrix();
+    glBegin(GL_QUADS);
+      glVertex3f( 20.0, 10.0, 0.0);
+      glVertex3f( 20.0, -10.0, 0.0);
+      glVertex3f( 20.0, -10.0, 80.0);
+      glVertex3f( 20.0, 10.0, 80.0);
+    glEnd();
+    glBegin(GL_QUADS);
+      glVertex3f( -20.0, 10.0, 0.0);
+      glVertex3f( -20.0, -10.0, 0.0);
+      glVertex3f( -20.0, -10.0, 80.0);
+      glVertex3f( -20.0, 10.0, 80.0);
+    glEnd();
+    // glBegin(GL_QUADS);
+    //   glVertex3f( 10.0, 6.0, -50.0);
+    //   glVertex3f( -10.0, 6.0, -50.0);
+    //   glVertex3f( -10.0, -6.0, -50.0);
+    //   glVertex3f( 10.0, -6.0, -50.0);
+    // glEnd();
+    // glBegin(GL_QUADS);
+    //   glVertex3f( 10.0, 6.0, 0.0);
+    //   glVertex3f( 10.0, -6.0, 0.0);
+    //   glVertex3f( 10.0, -6.0, -50.0);
+    //   glVertex3f( 10.0, 6.0, -50.0);
+    // glEnd();
+  glPopMatrix();
+
+}
