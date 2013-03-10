@@ -276,10 +276,10 @@ void glHidden (int isVisible)
 void movePlayer(void){
 float yaw = charPlayer.y_rot;
   if(key_state['a'] == true) {
-    charPlayer.x_pos += moveSpeed;
+      charPlayer.x_pos += moveSpeed;
   }
   if(key_state['d'] == true) {
-    charPlayer.x_pos -= moveSpeed;
+      charPlayer.x_pos -= moveSpeed;
   }
   if(key_state['w'] == true) {
     charPlayer.y_pos += moveSpeed;
