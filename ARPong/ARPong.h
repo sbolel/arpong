@@ -50,5 +50,6 @@ int getDisplayWidth(void)  { return WIDTH; }
 void movePlayer(void);
 void moveEnemy(void);
 void drawScene(void);
+void drawSphere(double r, int lats, int longs);
 void drawAxes(int colr);
 void drawText2D(void *pFont, double x0, double y0, const char *pString);
