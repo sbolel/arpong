@@ -1,11 +1,6 @@
 #include "ARPong.h"
 
-#include <GL/freeglut.h>
-#include <escapi.h>
-
-#include <iostream>
-
-// Use the first webcam device we find.  Change this if we ever need to 
+// Use the first webcam device we find.  Change this if we ever need to
 // support multiple devices.
 enum { DEVICE = 0 };
 
