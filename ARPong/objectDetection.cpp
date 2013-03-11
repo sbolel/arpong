@@ -1,4 +1,24 @@
-#include "ARPong.h"
+#include "objectDetection.h"
+
+center_t calculate_median(const frame& img) {
+	double x_sum = 0.0, y_sum = 0.0;
+	int pixels = 0;
+	for(int x = 0; x < WIDTH; ++x) {
+		for(int y = 0; y < HEIGHT; ++y) {
+			const uint8_t* pix = img.get_pixel(x, y);
+			if(!is_black(pix)) {
+				x_sum += x;
+				y_sum += y;
+				++pixels;
+			}
+		}
+	}
+
+	x_sum /= pixels;
+	y_sum /= pixels;
+	center_t res = { x_sum, y_sum };
+	return res;
+}
 
 void calculate_median(const frame& img, int &paddleX, int &paddleY) {
 	//given a buffer with a skin detection filter applied to it,

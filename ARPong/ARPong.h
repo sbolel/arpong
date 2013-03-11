@@ -31,3 +31,7 @@ public:
 		return &buffer[0];
 	}
 };
+
+inline bool is_black(const uint8_t* p) {
+	return !(p[0] || p[1] || p[2]);
+}
