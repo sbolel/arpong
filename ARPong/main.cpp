@@ -3,12 +3,9 @@ using namespace std;
 
 
 void udp_comm(void *) {
-  while(1) {
-    Sleep(1000);
-    cout << "---- UDP ----\n";
-  }
+    cout << "TCP Listening on port 9000\n";
+    ListenOnPort(9000);
 }
-
 
 // Set up the image capture library ESCAPI
 void setup_escapi() {
@@ -47,6 +44,7 @@ bool main_loop_iter() {
 int main(int argc, char** argv) {
 	// setup_escapi();
 
+  // Start second thread for TCP communication
   _beginthread(udp_comm, 0, (void*)1);
 
   glSetupOpenGL(argc, argv);
