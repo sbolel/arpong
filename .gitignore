@@ -1,2 +1,14 @@
 *.sdf
 *.opensdf
+ARPong/Debug/*
+include/asio-1.5.3/
+include/boost_1_53_0/
+
+ARPong/Debug/ARPong.log
+ARPong/Debug/escapi.obj
+ARPong/Debug/main.obj
+ARPong/Debug/vc110.idb
+ARPong/Debug/vc110.pdb
+Debug/ARPong.exe
+Debug/ARPong.ilk
+Debug/ARPong.pdb
