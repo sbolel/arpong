@@ -1,10 +1,23 @@
 #include "ARPong.h"
 using namespace std;
 
-
-void udp_comm(void *) {
-    cout << "TCP Listening on port 9000\n";
+void tcp_comm(void *) {
+  cout << "---------------------------------\n";
+  if (charPlayer.id==1) {
+    cout << "Player 1 - Server - TCP Listening on port 9000\n";
     ListenOnPort(9000);
+  }
+  else {
+    cout << "Player 2 - Client - TCP Connecting to 127.0.0.1:9000\n";
+    ConnectToHost(9000, "127.0.0.1");
+  }
+}
+
+void setup_player(void) {
+  cout << "Enter player number: ";
+  std::string id;
+  getline(cin,id,'\n');
+  charPlayer.id = std::stoi(id);
 }
 
 // Set up the image capture library ESCAPI
@@ -44,10 +57,10 @@ bool main_loop_iter() {
 int main(int argc, char** argv) {
 	// setup_escapi();
 
-  // Start second thread for TCP communication
-  _beginthread(udp_comm, 0, (void*)1);
+  setup_player();
 
   glSetupOpenGL(argc, argv);
+  _beginthread(tcp_comm, 0, (void*)1);
   glutMainLoop();
 
   // keep running until the video source quits or someone closes us

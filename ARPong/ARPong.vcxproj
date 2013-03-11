@@ -76,12 +76,12 @@
     <ClCompile Include="library\glut_draw.cpp" />
     <ClCompile Include="library\glut_materials_lights.cpp" />
     <ClCompile Include="library\player_class.cpp" />
-    <ClCompile Include="library\tcp_comm.cpp" />
+    <ClCompile Include="library\tcp_client.cpp" />
+    <ClCompile Include="library\tcp_server.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="library\message.hpp" />
-    <ClInclude Include="library\player_class.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

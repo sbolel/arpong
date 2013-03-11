@@ -8,11 +8,13 @@
 #include <fstream>
 #include <sstream>
 #include <windows.h>
+#include <winsock.h>
 #include <process.h>
 #include <GL/freeglut.h>
 #include <escapi.h>
 
-#include "library/tcp_comm.h"
+#include "library/tcp_server.h"
+#include "library/tcp_client.h"
 #include "library/player_class.h"
 #include "library/glut_draw.h"
 #include "library/glut_materials_lights.h"
@@ -41,7 +43,6 @@ static bool key_state[256] = {false};
 // Player and Enemy objects
 player_class charPlayer(1);
 player_class charEnemy(2);
-
 
 GLfloat sun_direction[] = { 0.0, 2.0, -1.0, 1.0 };
 GLfloat sun_intensity[] = { 0.7, 0.7, 0.7, 1.0 };

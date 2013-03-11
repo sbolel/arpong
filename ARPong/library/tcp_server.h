@@ -1,6 +1,5 @@
-#pragma once
-#include <iostream>
-#include <winsock.h>
+#ifndef TCP_SERVER_H_
+#define TCP_SERVER_H_
 
 #define SOCK_STREAM      1
 #define SOCK_DGRAM      2
@@ -9,3 +8,5 @@
 #define IPPROTO_TCP      6
 
 int ListenOnPort(int portno);
+
+#endif
