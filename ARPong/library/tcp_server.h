@@ -8,5 +8,6 @@
 #define IPPROTO_TCP      6
 
 int ListenOnPort(int portno);
+void ServerRead(void);
 
 #endif

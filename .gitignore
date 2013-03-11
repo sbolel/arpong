@@ -1,6 +1,7 @@
 *.sdf
 *.opensdf
 ARPong/Debug/*
+ARPong/Release/*
 include/asio-1.5.3/
 include/boost_1_53_0/
 
@@ -12,3 +13,5 @@ ARPong/Debug/vc110.pdb
 Debug/ARPong.exe
 Debug/ARPong.ilk
 Debug/ARPong.pdb
+Release/
+Debug/

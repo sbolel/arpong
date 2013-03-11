@@ -34,3 +34,13 @@ int ListenOnPort(int portno)
     return 0;
     //Don't forget to clean up with CloseConnection()!
 }
+
+void ServerRead(void)
+{
+  char server_buffer[2];
+  // server_buffer[0]: client X pos
+  // server_buffer[1]: client Y pos
+  memset(server_buffer, 0, sizeof(server_buffer)); //Clear the server_buffer
+  recv (socket_client, server_buffer, sizeof(server_buffer)-1, 0);
+  cout << server_buffer[0] << server_buffer[1];
+}
