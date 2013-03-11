@@ -46,6 +46,19 @@ bool ConnectToHost(int PortNo, char* IPAddress)
         return true; //Success
 }
 
+void ClientRead(void)
+{
+  char client_buffer[5];
+  // client_buffer[0]: server X pos
+  // client_buffer[1]: server Y pos
+  // client_buffer[2]: ball X pos
+  // client_buffer[3]: ball Y pos
+  // client_buffer[4]: ball Z pos
+  memset(client_buffer, 0, sizeof(client_buffer)); //Clear the client_buffer
+  recv (socket_client, client_buffer, sizeof(client_buffer)-1, 0);
+  cout << client_buffer[0] << client_buffer[1] << client_buffer[2] << client_buffer[3] << client_buffer[4];
+}
+
 //CLOSECONNECTION – shuts down the socket and closes any connection on it
 void CloseConnection ()
 {

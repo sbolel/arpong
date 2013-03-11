@@ -10,6 +10,10 @@ void tcp_comm(void *) {
   else {
     cout << "Player 2 - Client - TCP Connecting to 127.0.0.1:9000\n";
     ConnectToHost(9000, "127.0.0.1");
+    while(1) {
+      Sleep(10);
+      ClientRead();
+    }
   }
 }
 
