@@ -54,10 +54,10 @@ void glDisplay() {
   moveEnemy();
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-  glLoadIdentity ();
-  gluLookAt(  0.0f, 0.0f, -2.0f,
-      0.0f, 0.0f,  30.0f,
-      0.0f, 1.0f,  2.0f);
+  glLoadIdentity();
+  gluLookAt(0.0f, 0.0f, -2.0f,
+            0.0f, 0.0f,  30.0f,
+            0.0f, 1.0f,  2.0f);
   // vertices for simple textured-quad rendering
   const struct { float tu, tv; float x, y, z; } vertices[] = {
     { 0.0f, 0.0f, -1.0f,-1.0f, 0.0f },
@@ -98,47 +98,45 @@ void glDisplay() {
 	glutSwapBuffers();
 }
 
-void movePlayer(void){
-float yaw = charPlayer.y_rot;
+void movePlayer(void) {
   if(key_state['a'] == true) {
-    charPlayer.x_pos += moveSpeed;
+    charPlayer.xInc(moveSpeed);
   }
   if(key_state['d'] == true) {
-    charPlayer.x_pos -= moveSpeed;
+    charPlayer.xDec(moveSpeed);
   }
   if(key_state['w'] == true) {
-    charPlayer.y_pos += moveSpeed;
+    charPlayer.yInc(moveSpeed);
   }
   if(key_state['s'] == true) {
-    charPlayer.y_pos -= moveSpeed;
+    charPlayer.yDec(moveSpeed);
   }
   if(key_state['z'] == true) {
-    charPlayer.z_pos += moveSpeed;
+    charPlayer.zInc(moveSpeed);
   }
   if(key_state['x'] == true) {
-    charPlayer.z_pos -= moveSpeed;
+    charPlayer.zDec(moveSpeed);
   }
 }
 
-void moveEnemy(void){
-float yaw = charEnemy.y_rot;
+void moveEnemy(void) {
   if(key_state['f'] == true) {
-    charEnemy.x_pos -= moveSpeed;
+    charEnemy.xDec(moveSpeed);
   }
   if(key_state['h'] == true) {
-    charEnemy.x_pos += moveSpeed;
-  }
-  if(key_state['t'] == true) {
-    charEnemy.y_pos += moveSpeed;
+    charEnemy.xInc(moveSpeed);
   }
   if(key_state['g'] == true) {
-    charEnemy.y_pos -= moveSpeed;
+    charEnemy.yDec(moveSpeed);
+  }
+  if(key_state['t'] == true) {
+    charEnemy.yInc(moveSpeed);
   }
   if(key_state['z'] == true) {
-    charEnemy.z_pos += moveSpeed;
+    charEnemy.zInc(moveSpeed);
   }
   if(key_state['x'] == true) {
-    charEnemy.z_pos -= moveSpeed;
+    charEnemy.zDec(moveSpeed);
   }
 }
 

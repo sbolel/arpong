@@ -33,7 +33,7 @@ static bool key_state[256] = {false};        // Key state container
 
 const double pi = atan(1.0)*4.0;
 const double rad = (pi/180.0);
-const float moveSpeed=0.001;
+const GLfloat moveSpeed=0.001;
 
 // Buffer for copying video frams
 int frame_buffer[WIDTH * HEIGHT];

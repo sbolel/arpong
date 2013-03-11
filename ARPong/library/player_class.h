@@ -4,15 +4,11 @@
 class player_class
 {
 public:
-  int     id;
-  double	x_pos, x_pos_max, x_pos_min,
-          y_pos, y_pos_max, y_pos_min,
-          z_pos,  z_pos_max, z_pos_min,
-          x_rot, y_rot, z_rot,
-          x_bnd, y_bnd, z_bnd;
-  int		isDragging;				// TRUE if user is holding down the mouse button
-  								// that affects our value(s); else FALSE.
-  int m_x,m_y;  // last mouse-dragging position.
+  GLint   id;
+  GLfloat position[3];  // x, y, z
+  GLfloat pos_max[3];   // x, y, z
+  GLfloat pos_min[3];   // x, y, z
+  GLint   score;
 
   ~player_class(void);
    player_class(void);
@@ -20,8 +16,19 @@ public:
 
   // Coordinate matrix manipulation functions
   void reset(void);
-  void apply_TR_Matrix(void);
-  void apply_RT_Matrix(void);
-  void apply_R_Matrix(void);
   void apply_T_Matrix(void);
+
+  GLfloat x() {return position[0];}
+  GLfloat y() {return position[1];}
+  GLfloat z() {return position[2];}
+
+  void xInc(GLfloat pos) {position[0] += pos;}
+  void yInc(GLfloat pos) {position[1] += pos;}
+  void zInc(GLfloat pos) {position[2] += pos;}
+
+  void xDec(GLfloat pos) {position[0] -= pos;}
+  void yDec(GLfloat pos) {position[1] -= pos;}
+  void zDec(GLfloat pos) {position[2] -= pos;}
+
+
 };
