@@ -72,7 +72,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="escapi.cpp" />
-    <ClCompile Include="library\glut_callbacks.cpp" />
     <ClCompile Include="library\glut_draw.cpp" />
     <ClCompile Include="library\glut_materials_lights.cpp" />
     <ClCompile Include="library\player_class.cpp" />

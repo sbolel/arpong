@@ -1,7 +1,6 @@
 #include "ARPong.h"
 using namespace std;
 
-
 // Set up the image capture library ESCAPI
 void setup_escapi() {
 	// Initialize the DLL and ask how many webcams it found
@@ -38,67 +37,22 @@ bool main_loop_iter() {
 
 int main(int argc, char** argv) {
 	// setup_escapi();
-  GLfloat sun_direction[] = { 0.0, 2.0, -1.0, 1.0 };
-  GLfloat sun_intensity[] = { 0.7, 0.7, 0.7, 1.0 };
-  GLfloat ambient_intensity[] = { 0.3, 0.3, 0.3, 1.0 };
 
-	glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
-	glutInitWindowSize(WIDTH, HEIGHT);
-	glutCreateWindow("ARPong");
-
-  glutDisplayFunc(glDisplay);
-  glutIdleFunc(glDisplay);        // GLUT idle function
-	glutReshapeFunc(glReshape);
-	glutKeyboardFunc(glKeyboard);
-  glutKeyboardUpFunc(glKeyUpFunc);// keystate function
-	glutSpecialFunc(glKeySpecial);
-  glutIgnoreKeyRepeat(true);
-  glEnable (GL_DEPTH_TEST);       // enable DEPTH test
-
-  glEnable(GL_LIGHTING);
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_intensity);
-  glEnable(GL_LIGHT0);                // Set up sunlight.
-  glLightfv(GL_LIGHT0, GL_POSITION, sun_direction);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_intensity);
-  glEnable(GL_COLOR_MATERIAL);        // Configure glColor().
-  glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-
-	GLuint texture;
-  glClearColor(0.03, 0.03, 0.2, 0.0);     // Dark blue background set
-	glEnable(GL_TEXTURE_2D);
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glShadeModel(GL_SMOOTH);
-  runAnimTimer(1);                // start our animation loop.
+  glSetupOpenGL(argc, argv);
 
   // keep running until the video source quits or someone closes us
   // while(main_loop_iter()) { }
 
-  glutMainLoop();                 // enter GLUT's event-handler; NEVER EXITS.
+  glutMainLoop();
 
 	// deinitCapture(DEVICE);
-  return 0;                       // SUCCESSFUL exit, C++ Compatibility
+  return 0;
 }
 
-
-void glReshape( int width, int height )
-//------------------------------------------------------------------------------
-{
-  glViewport((WIDTH-HEIGHT)/2,0, HEIGHT, HEIGHT);
-  glMatrixMode(GL_PROJECTION);  // select camera-setting matrix stack
-  glLoadIdentity();             // clear it: identity matrix.
-  gluPerspective (45, (GLfloat)WIDTH / (GLfloat)HEIGHT, 1.0, 1000.0);
-  glMatrixMode(GL_MODELVIEW);        //return to modelview coords
-  glutPostRedisplay();      // request redraw--we changed window size!
-}
-
-
-// OpenGL display function, called whenever a new frame is requested
 void glDisplay() {
   movePlayer();
   moveEnemy();
+
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glLoadIdentity ();
   gluLookAt(  0.0f, 0.0f, -2.0f,
@@ -140,17 +94,17 @@ void glDisplay() {
     drawAxes(0);
   glPopMatrix();
 
-	glFlush();	                // do any and all pending openGL rendering.
+	glFlush();
 	glutSwapBuffers();
 }
 
 void movePlayer(void){
 float yaw = charPlayer.y_rot;
   if(key_state['a'] == true) {
-      charPlayer.x_pos += moveSpeed;
+    charPlayer.x_pos += moveSpeed;
   }
   if(key_state['d'] == true) {
-      charPlayer.x_pos -= moveSpeed;
+    charPlayer.x_pos -= moveSpeed;
   }
   if(key_state['w'] == true) {
     charPlayer.y_pos += moveSpeed;
@@ -186,4 +140,127 @@ float yaw = charEnemy.y_rot;
   if(key_state['x'] == true) {
     charEnemy.z_pos -= moveSpeed;
   }
+}
+
+void glKeyboard(unsigned char key, int xw, int yw) {
+  key_state[key] = true;
+  switch(key) {
+    case'a': case's': case'd': case'w':
+      cout << "Move player\n";
+      break;
+    case'f': case'g': case'h': case't':
+      cout << "Move enemy\n";
+      break;
+    case'z': case'x':
+      cout << "Move Z direction\n";
+      break;
+    case 'c':
+      if(glutClearStatus==0) glutClearStatus = 1;
+      else                   glutClearStatus = 0;
+      break;
+    case 'p':
+      if(glutAnimationStatus ==1) glRunTimer(0);
+      else                        glRunTimer(1);
+      break;
+    case ' ': case 27: case 'Q': case 'q':
+      exit(0);
+      break;
+    default:
+      cout << "Invalid key\n";
+      break;
+  }
+}
+
+void glKeyUpFunc(unsigned char key, int x, int y) {
+    key_state[key] = false;
+}
+
+void glKeySpecial(int key, int xw, int yw) {
+  // mouse pos in coords with origin at lower left
+  //(window system puts origin at UPPER left)
+  int xpos,ypos;
+      xpos = xw;
+      ypos = HEIGHT - yw;
+  switch(key) {
+    case GLUT_KEY_F1:
+      cout << "\nARPong Help File (Press F1 to Resume)\n";
+      cout << "----------------------------\n";
+      cout << "() \n";
+      cout << "() \n";
+      break;
+    default:
+      cout << "Special Key Pressed, Value: "<< (int)key << "\n)";
+      break;
+  }
+}
+
+void drawText2D(void *pFont, double x0, double y0, const char *pString) {
+  int i, imax;
+  glRasterPos2d(x0, y0);
+  imax = 1023;
+  for(i=0; pString[i] != '\0' && i<imax; i++) {
+    glutBitmapCharacter(pFont, pString[i]);
+  }
+}
+
+void glReshape( int width, int height ) {
+  glViewport((WIDTH-HEIGHT)/2,0, HEIGHT, HEIGHT);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective (45, (GLfloat)WIDTH / (GLfloat)HEIGHT, 1.0, 1000.0);
+  glMatrixMode(GL_MODELVIEW);
+  glutPostRedisplay();
+}
+
+void glHidden (int isVisible) {
+    if(isVisible == GLUT_VISIBLE)
+      glRunTimer(1);
+    else
+      glRunTimer(0);
+}
+
+void glRunTimer(int isOn) {
+    glutAnimationStatus = isOn;
+    if(isOn == 1)
+      glutTimerFunc(NU_PAUSE, glTimer, 1);
+}
+
+void glTimer (int value) {
+    if(value != glutAnimationStatus) {
+        cout << "\n(Anim cancelled during GLUT wait)\n";
+        glutPostRedisplay();
+        glRunTimer(1);
+    }
+}
+
+void glSetupOpenGL(int argc, char** argv) {
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
+  glutInitWindowSize(WIDTH, HEIGHT);
+  glutCreateWindow("ARPong");
+  glutDisplayFunc(glDisplay);
+  glutIdleFunc(glDisplay);
+  glutReshapeFunc(glReshape);
+  glutKeyboardFunc(glKeyboard);
+  glutKeyboardUpFunc(glKeyUpFunc);
+  glutSpecialFunc(glKeySpecial);
+  glutIgnoreKeyRepeat(true);
+
+  glEnable (GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);          // Set up sunlight.
+  glEnable(GL_COLOR_MATERIAL);
+  glEnable(GL_TEXTURE_2D);
+
+  GLuint texture;
+  glShadeModel(GL_SMOOTH);
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_intensity);
+  glLightfv(GL_LIGHT0, GL_POSITION, sun_direction);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_intensity);
+  glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glClearColor(0.03, 0.03, 0.2, 0.0);
+  glRunTimer(1);
 }
