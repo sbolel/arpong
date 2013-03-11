@@ -72,7 +72,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="escapi.cpp" />
+    <ClCompile Include="histogram.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="video.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ARPong.h" />
+    <ClInclude Include="histogram.h" />
+    <ClInclude Include="video.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

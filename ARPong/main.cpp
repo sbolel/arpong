@@ -1,18 +1,19 @@
 #include "ARPong.h"
+#include "histogram.h"
+#include "video.h"
 
 #include <GL/freeglut.h>
-#include <escapi.h>
 
-#include <iostream>
-
-// Use the first webcam device we find.  Change this if we ever need to 
-// support multiple devices.
-enum { DEVICE = 0 };
-
-// Buffer into which video frames will be copied.
-int frame_buffer[WIDTH * HEIGHT];
-
+#include <algorithm>
+#include <fstream>
 using namespace std;
+
+const char* TRAINING_FILE = "../skin_rgb.txt";
+
+video_stream stream;
+uint32_t dtn_buffer[WIDTH * HEIGHT];
+histogram hist;
+double tld = .00001;
 
 // OpenGL display function, called whenever a new frame is requested
 void display() {
@@ -26,7 +27,7 @@ void display() {
 
 	glPushMatrix();
 	glScaled(-1.0, -1.0, 0.0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, frame_buffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, dtn_buffer);
 
 	glInterleavedArrays(GL_T2F_V3F, 0, vertices);
 	glDrawArrays(GL_QUADS, 0, 4);
@@ -34,29 +35,26 @@ void display() {
 	glutSwapBuffers();
 }
 
-// Set up the image capture library ESCAPI
-void setup_escapi() {
-	// Initialize the DLL and ask how many webcams it found
-	int devices = setupESCAPI();
-	if(!devices) {
-		cerr << "ESCAPI found no devices.\n";
-		throw runtime_error("setupESCAPI");
-	}
-
-	// Tell the library where our buffer is and how big it is
-	SimpleCapParams params = { frame_buffer, WIDTH, HEIGHT };
-	if(!initCapture(DEVICE, &params)) {
-		cerr << "initCapture failed, please install a better webcam\n";
-		throw runtime_error("initCapture");
+void detect_skin() {
+	copy(begin(stream.buffer), end(stream.buffer), begin(dtn_buffer));
+	const rgb_byte ZERO = { };
+	for(int y = HEIGHT - 1; y; --y) {
+		for(int x = WIDTH - 1; x; --x) {
+			auto orig = reinterpret_cast<uint8_t*>(get_pix_ptr(dtn_buffer, x, y));
+			rgb hist_in = { orig[2], orig[1], orig[0] };
+			if(hist.value(hist_in) < tld) {
+				orig[0] = orig[1] = orig[2] = 0;
+			}
+		}
 	}
 }
 
 bool main_loop_iter() {
-	doCapture(DEVICE);
-
 	// If we got a video frame, render it and run the game
-	if(!isCaptureDone(DEVICE)) {
+	if(stream.next_frame()) {
 		/// TODO: Game logic and networking calls go here
+
+		detect_skin();
 
 		// Tell GLUT to render this frame and manually proceed to the next one
 		glutPostRedisplay();
@@ -70,7 +68,8 @@ bool main_loop_iter() {
 }
 
 int main(int argc, char** argv) {
-	setup_escapi();
+	ifstream training(TRAINING_FILE);
+	hist = load_histogram(training);
 
 	glutInit(&argc, argv);
 	glutInitWindowSize(WIDTH, HEIGHT);
@@ -88,6 +87,4 @@ int main(int argc, char** argv) {
 
 	// keep running until the video source quits or someone closes us
 	while(main_loop_iter()) { }
-
-	deinitCapture(DEVICE);
 }
