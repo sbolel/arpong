@@ -11,9 +11,14 @@ using namespace std;
 const char* TRAINING_FILE = "../skin_rgb.txt";
 
 video_stream stream;
-uint32_t dtn_buffer[WIDTH * HEIGHT];
+frame dtn_frame;
 histogram hist;
-double tld = .00001;
+
+// should we close the application?
+bool window_closed = false;
+
+// detection threshold
+double tld = .00005;
 
 // OpenGL display function, called whenever a new frame is requested
 void display() {
@@ -27,7 +32,7 @@ void display() {
 
 	glPushMatrix();
 	glScaled(-1.0, -1.0, 0.0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, dtn_buffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, dtn_frame.get_buffer_data());
 
 	glInterleavedArrays(GL_T2F_V3F, 0, vertices);
 	glDrawArrays(GL_QUADS, 0, 4);
@@ -35,12 +40,18 @@ void display() {
 	glutSwapBuffers();
 }
 
+void on_close() {
+	window_closed = true;
+	stream.cleanup();
+}
+
 void detect_skin() {
-	copy(begin(stream.buffer), end(stream.buffer), begin(dtn_buffer));
+	dtn_frame = stream.current_frame;
+
 	const rgb_byte ZERO = { };
 	for(int y = HEIGHT - 1; y; --y) {
 		for(int x = WIDTH - 1; x; --x) {
-			auto orig = reinterpret_cast<uint8_t*>(get_pix_ptr(dtn_buffer, x, y));
+			auto orig = dtn_frame.get_pixel(x, y);
 			rgb hist_in = { orig[2], orig[1], orig[0] };
 			if(hist.value(hist_in) < tld) {
 				orig[0] = orig[1] = orig[2] = 0;
@@ -51,7 +62,7 @@ void detect_skin() {
 
 bool main_loop_iter() {
 	// If we got a video frame, render it and run the game
-	if(stream.next_frame()) {
+	if(!window_closed && stream.next_frame()) {
 		/// TODO: Game logic and networking calls go here
 
 		detect_skin();
@@ -75,6 +86,7 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutCreateWindow("ARPong");
 	glutDisplayFunc(display);
+	glutCloseFunc(on_close);
 
 	GLuint texture;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
