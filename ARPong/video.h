@@ -2,29 +2,6 @@
 
 #include "ARPong.h"
 
-#include <array>
-
-class frame {
-	std::array<uint32_t, WIDTH * HEIGHT> buffer;
-
-public:
-	// Returns a pointer to the beginning of a pixel in memory.
-	// Pixels are laid out in BGRA format.  A is not defined.
-	uint8_t* get_pixel(int x, int y) {
-		return reinterpret_cast<uint8_t*>(&buffer[WIDTH * (HEIGHT - y) + x]);
-	}
-	
-	// Allow const methods to get a read-only copy of the data
-	const uint8_t* get_pixel(int x, int y) const {
-		return const_cast<frame*>(this)->get_pixel(x, y);
-	}
-
-	// Return a pointer to the underlying data.  Be careful with this!
-	void* get_buffer_data() {
-		return &buffer[0];
-	}
-};
-
 class video_stream {
 public:
 	video_stream();

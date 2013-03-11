@@ -19,6 +19,7 @@ inline uint32_t* get_pix_ptr(int x, int y) {
 
 // coordinates of most recent click
 struct { int x, y; } last_click = { -1, -1 };
+struct { float r, g, b; } color = { -1, -1, -1 };
 
 // OpenGL display function, called whenever a new frame is requested
 void display() {
@@ -34,6 +35,7 @@ void display() {
 	glScaled(-1.0, -1.0, 0.0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, buffer);
 
+	if(color.r > 0) glColor3fv((GLfloat*)&color);
 	/*glColor3f(1.0, 0.0, 0.0);
 	glBegin(GL_POINTS);
 		glVertex2f((float)last_click.x, (float)last_click.y);
@@ -58,6 +60,9 @@ void click(int button, int state, int x, int y) {
 				for(int x0 = min(last_click.x, x); x0 <= max(last_click.x, x); ++x0) {
 					for(int y0 = min(last_click.y, y); y0 <= max(last_click.y, y); ++y0) {
 						uint8_t* pix = reinterpret_cast<uint8_t*>(get_pix_ptr(x0, y0));
+						color.r = pix[2];
+						color.g = pix[1];
+						color.b = pix[0];
 						out_file << (int)pix[2] << ',' << (int)pix[1] << ',' << (int)pix[0] << '\n';
 					}
 				}
@@ -101,6 +106,12 @@ int main(int argc, char** argv) {
 	if(!devices) {
 		cerr << "ESCAPI found no devices.\n";
 		throw runtime_error("setupESCAPI");
+	}
+
+	for(int i = 0; i < devices; ++i) {
+		char buf[128] = { };
+		getCaptureDeviceName(i, buf, sizeof(buf));
+		cout << buf << "\n";
 	}
 
 	SimpleCapParams scp = { reinterpret_cast<int*>(buffer), WIDTH, HEIGHT };
