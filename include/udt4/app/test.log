@@ -1,0 +1,42 @@
+﻿Build started 3/11/2013 3:53:30 AM.
+     1>Project "C:\Users\Sinan\SkyDrive\My Documents\Northwestern\_EECS 332\arpong\include\udt4\win\test.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I../src /I../src /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"../app\\" /Fd"../app\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\app\test.cpp
+         test.cpp
+     1>c:\users\sinan\skydrive\my documents\northwestern\_eecs 332\arpong\include\udt4\src\udt.h(248): warning C4251: 'CUDTException::m_strMsg' : class 'std::basic_string<_Elem,_Traits,_Alloc>' needs to have dll-interface to be used by clients of class 'CUDTException'
+                 with
+                 [
+                     _Elem=char,
+                     _Traits=std::char_traits<char>,
+                     _Alloc=std::allocator<char>
+                 ]
+     1>c:\users\sinan\skydrive\my documents\northwestern\_eecs 332\arpong\include\udt4\src\udt.h(250): warning C4251: 'CUDTException::m_strAPI' : class 'std::basic_string<_Elem,_Traits,_Alloc>' needs to have dll-interface to be used by clients of class 'CUDTException'
+                 with
+                 [
+                     _Elem=char,
+                     _Traits=std::char_traits<char>,
+                     _Alloc=std::allocator<char>
+                 ]
+     1>c:\users\sinan\skydrive\my documents\northwestern\_eecs 332\arpong\include\udt4\src\udt.h(251): warning C4251: 'CUDTException::m_strDebug' : class 'std::basic_string<_Elem,_Traits,_Alloc>' needs to have dll-interface to be used by clients of class 'CUDTException'
+                 with
+                 [
+                     _Elem=char,
+                     _Traits=std::char_traits<char>,
+                     _Alloc=std::allocator<char>
+                 ]
+     1>c:\users\sinan\skydrive\my documents\northwestern\_eecs 332\arpong\include\udt4\app\test.cpp(36): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>c:\users\sinan\skydrive\my documents\northwestern\_eecs 332\arpong\include\udt4\app\test.cpp(81): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>c:\users\sinan\skydrive\my documents\northwestern\_eecs 332\arpong\include\udt4\app\test.cpp(108): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>c:\users\sinan\skydrive\my documents\northwestern\_eecs 332\arpong\include\udt4\app\test.cpp(130): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"../app\test.exe" /INCREMENTAL /NOLOGO /LIBPATH:../src kernel32.lib user32.lib ws2_32.lib udt.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"../app\test.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"../app\test.lib" /MACHINE:X86 /SAFESEH ../app\test.obj
+     1>LINK : fatal error LNK1104: cannot open file 'udt.lib'
+     1>Done Building Project "C:\Users\Sinan\SkyDrive\My Documents\Northwestern\_EECS 332\arpong\include\udt4\win\test.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.54

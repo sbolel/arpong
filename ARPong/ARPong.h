@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <windows.h>
+#include <process.h>
 #include <GL/freeglut.h>
 #include <escapi.h>
 

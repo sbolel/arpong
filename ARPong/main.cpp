@@ -1,6 +1,15 @@
 #include "ARPong.h"
 using namespace std;
 
+
+void udp_comm(void *) {
+  while(1) {
+    Sleep(1000);
+    cout << "---- UDP ----\n";
+  }
+}
+
+
 // Set up the image capture library ESCAPI
 void setup_escapi() {
 	// Initialize the DLL and ask how many webcams it found
@@ -38,12 +47,14 @@ bool main_loop_iter() {
 int main(int argc, char** argv) {
 	// setup_escapi();
 
+  _beginthread(udp_comm, 0, (void*)1);
+
   glSetupOpenGL(argc, argv);
+  glutMainLoop();
 
   // keep running until the video source quits or someone closes us
   // while(main_loop_iter()) { }
 
-  glutMainLoop();
 
 	// deinitCapture(DEVICE);
   return 0;
