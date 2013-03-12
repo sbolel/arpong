@@ -2,7 +2,10 @@
 
 #include <cstdint>
 #include <array>
+#include <list>
 #include <memory>
+
+#include <glm/glm.hpp>
 
 // The width and height we are going to work at.  ESCAPI automatically scales
 // larger images down to this.
@@ -45,6 +48,32 @@ public:
 		return &(*buffer)[0];
 	}
 };
+
+// represents a sliding window of points that we weight so that the most
+// recent is the most important
+class sliding_window {
+	enum { SIZE = 10 };
+	std::list<glm::ivec2> history;
+
+public:
+	void push_value(glm::ivec2 p) {
+		history.push_back(p);
+		if(history.size() > SIZE) {
+			history.pop_front();
+		}
+	}
+
+	glm::ivec2 value() const {
+		glm::vec2 tmp(0);
+		int factor = 1;
+		for(auto& p : history) {
+			tmp += glm::vec2(p) / pow(2.0f, factor++);
+		}
+
+		return glm::ivec2(tmp);
+	}
+};
+
 
 inline bool is_black(const uint8_t* p) {
 	return !(p[0] || p[1] || p[2]);

@@ -1,6 +1,10 @@
 #include "ARPong.h"
+#include "game.h"
 #include "histogram.h"
 #include "objectDetection.h"
+#include "render.h"
+#include "tcp_client.h"
+#include "tcp_server.h"
 #include "video.h"
 
 #include <GL/freeglut.h>
@@ -9,89 +13,46 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <list>
+#include <string>
+#include <thread>
 
 using namespace std;
 
-const char* TRAINING_FILE = "../skin_rgb.txt";
+namespace {
+	const string TRAINING_FILE = "../skin_rgb.txt";
 
-video_stream stream;
-frame dtn_frame;
-histogram hist;
+	// video stream we're reading from
+	video_stream stream;
 
-GLuint texture;
+	// window for hand-cursor positioning
+	sliding_window cursor_pos;
 
-// should we close the application?
-bool window_closed = false;
+	game global_game;
 
-// detection threshold
-double tld = .000001;
+	enum PlayerType { SERVER = 1, CLIENT = 2 };
+	PlayerType player_number;
+	string server_ip;
 
-class sliding_window {
-	enum { SIZE = 10 };
-	list<glm::ivec2> history;
-
-public:
-	void push_value(glm::ivec2 p) {
-		history.push_back(p);
-		if(history.size() > SIZE) {
-			history.pop_front();
-		}
-	}
-
-	glm::ivec2 value() const {
-		glm::vec2 tmp(0);
-		int factor = 1;
-		for(auto& p : history) {
-			tmp += glm::vec2(p) / pow(2.0f, factor++);
-		}
-
-		return glm::ivec2(tmp);
-	}
-};
-
-sliding_window cursor_pos;
-
-// OpenGL display function, called whenever a new frame is requested
-void display() {
-	// vertices for simple textured-quad rendering
-	const struct { float tu, tv; float x, y, z; } vertices[] = {
-		{ 0.0f, 0.0f, -1.0f,-1.0f, 0.0f },
-		{ 1.0f, 0.0f,  1.0f,-1.0f, 0.0f },
-		{ 1.0f, 1.0f,  1.0f, 1.0f, 0.0f },
-		{ 0.0f, 1.0f, -1.0f, 1.0f, 0.0f }
-	};
-
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	glPushMatrix();
-	glScaled(-1.0, -1.0, 1.0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, dtn_frame.get_buffer_data());
-	glInterleavedArrays(GL_T2F_V3F, 0, vertices);
-	glDrawArrays(GL_QUADS, 0, 4);
-	glPopMatrix();
-
-	glPushMatrix();
-	glScaled(-1.0, 1.0, 1.0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glColor3f(1.0, 0.0, 0.0);
-	glPointSize(5.0);
-
-	auto cur = cursor_pos.value();
-	glBegin(GL_POINTS);
-		glVertex2d(cur.x * 2. / WIDTH - 1., cur.y * 2. / HEIGHT - 1.);
-	glEnd();
-	glPopMatrix();
-
-	glColor3f(1.0, 1.0, 1.0);
-	glutSwapBuffers();
+	// should we close the application?
+	bool window_closed = false;
 }
 
+// Clean up the application before we exit
 void on_close() {
 	window_closed = true;
 	stream.cleanup();
 }
 
+// frame that's had the detection algorithm run through it
+frame dtn_frame;
+
+// histogram that does the skin tone detection
+histogram hist;
+
+// detection threshold
+double tld = .000001;
+
+// Run skin-detection algorithm
 frame detect_skin(const frame& in) {
 	dtn_frame = in;
 
@@ -109,17 +70,51 @@ frame detect_skin(const frame& in) {
 	return dtn_frame;
 }
 
+void net_loop() {
+	if(player_number == SERVER) {   
+		ListenOnPort(9000);
+	}
+	else {
+		bool connect_status = false;
+		while(!connect_status) {
+			connect_status = ConnectToHost(9000, (char*)server_ip.c_str());
+		}
+	}
+	while(!window_closed) {
+		auto paddle = vec2(cursor_pos.value());
+
+		paddle.x = paddle.x / WIDTH * 2 - 1;
+		paddle.y = paddle.y / HEIGHT * 2 - 1;
+
+		if(player_number == SERVER) {
+			auto data = ServerRead();
+			global_game.p1.pos = paddle;
+			global_game.p2.pos = data.paddle;
+			ServerWrite(paddle, global_game.b.pos);
+		}
+		else {
+			auto data = ClientRead();
+			global_game.p1.pos = paddle;
+			global_game.p2.pos = data.paddle;
+			global_game.b.pos = data.ball;
+			ClientWrite(paddle.x, paddle.y);
+		}
+	}
+}
+
 bool main_loop_iter() {
 	// If we got a video frame, render it and run the game
 	if(!window_closed && stream.next_frame()) {
-		/// TODO: Game logic and networking calls go here
-
 		dtn_frame = detect_skin(stream.current_frame);
 		cursor_pos.push_value(calculate_median(dtn_frame));
 
 		// Tell GLUT to render this frame and manually proceed to the next one
 		glutPostRedisplay();
 		glutMainLoopEvent();
+
+		auto c = cursor_pos.value();
+		cout << c.x << ',' << c.y << '\n';
+
 		return true;
 	}
 	// Can't capture more video, exit the program
@@ -129,22 +124,28 @@ bool main_loop_iter() {
 }
 
 int main(int argc, char** argv) {
+	player_number = SERVER;
+
+	global_game.b.radius = 0.25;
+
+	// The client provides the IP address of the server.  the server starts
+	// with no arguments.
+	if(argc > 1) {
+		server_ip = argv[1];
+		player_number = CLIENT;
+	}
+	else {
+		global_game.b.pos = glm::vec3(0, 0, 0);
+		global_game.b.velocity = glm::vec3(0, 0, 0.5);
+	}
+
 	ifstream training(TRAINING_FILE);
 	hist = load_histogram(training);
 
-	glutInit(&argc, argv);
-	glutInitWindowSize(WIDTH, HEIGHT);
-	glutCreateWindow("ARPong");
-	glutDisplayFunc(display);
+	setupGlut(argc, argv, global_game);
 	glutCloseFunc(on_close);
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable(GL_TEXTURE_2D);
-	glViewport(0, 0, WIDTH, HEIGHT);
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	thread t(net_loop);
 
 	// keep running until the video source quits or someone closes us
 	while(main_loop_iter()) { }
