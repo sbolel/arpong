@@ -19,6 +19,7 @@
 #include "library/player_class.h"
 #include "library/glut_draw.h"
 #include "library/glut_materials_lights.h"
+#include "library/image/histogram.h"
 
 #define NU_PAUSE 10
 
