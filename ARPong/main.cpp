@@ -26,7 +26,14 @@ void tcp_comm(void *) {
   else {
     bool connect_status = 0;
     while (connect_status==0) {
-      connect_status = ConnectToHost(9000, "127.0.0.1");}
+      cout << "Enter server IP: ";
+      std::string ip_str;
+      getline(cin,ip_str,'\n');
+      char * server_ip = new char[ip_str.size()+1];
+      std::copy(ip_str.begin(), ip_str.end(), server_ip);
+      connect_status = ConnectToHost(9000, server_ip);
+      delete server_ip;
+    }
     while(1) {
       Sleep(30);
       updateClient(ClientRead());
