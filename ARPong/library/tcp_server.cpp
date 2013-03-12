@@ -59,11 +59,11 @@ int ListenOnPort(int portno)
 void ServerRead(void)
 {
   int nret;
-  char buffer[256] = {0};
-  nret = recv(theClient,buffer,256,0);
-  for (int i=0;i<20;i++){
+  char buffer[64] = {0};
+  nret = recv(theClient,buffer,64,0);
+  cout<<"Received Client Coordinates: ";
+  for (int i=0;i<64;i++){
     cout << buffer[i];
   }
-  cout<<"\n";
-  cout<<"nret: "<<nret;
+  cout << "nret: "<< nret << "\n";
 }

@@ -7,7 +7,7 @@ void tcp_comm(void *) {
   if (charPlayer.id==1) {
     ListenOnPort(9000);
     while(1) {
-      Sleep(100);
+      Sleep(50);
       ServerRead();
     }
   }

@@ -67,10 +67,10 @@ void ClientRead(void)
 void ClientSend(int x, int y)
 {
   int nret;
-  char buffer[256]={0};
-  strcpy(buffer, "Pretend this is important data.");
+  char buffer[64]={0};
+  sprintf(buffer, "%d,%d", x, y);
   nret = send(socket_client, buffer, strlen(buffer),0);
-  cout<<"nret: "<<nret;
+  cout << "nret: "<< nret << "\n";
 }
 
 //CLOSECONNECTION – shuts down the socket and closes any connection on it
