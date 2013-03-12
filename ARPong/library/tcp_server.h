@@ -8,5 +8,5 @@
 #define IPPROTO_TCP      6
 
 int ListenOnPort(int portno);
-client_data ServerRead(void);
-void ServerWrite(float cx, float cy, float bx, float by, float bz);
+float ServerRead(void);
+void ServerWrite(float x, float bx, float bz);

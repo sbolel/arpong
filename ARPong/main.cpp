@@ -2,140 +2,87 @@
 using namespace std;
 
 // Global player variables
-player_class charPlayer(1);
-player_class charEnemy(2);
+player_class player(1);
+player_class enemy(2);
+player_class ball(3);
+
+void updateClient(server_data sd){
+  enemy.x = sd.x;
+  ball.x = sd.b_x;
+  ball.z = sd.b_z;
+}
 
 void tcp_comm(void *) {
   WSACleanup();
   cout << "---------------------------------\n";
-  if (charPlayer.id==1) {
+  if (player.id==1) {
     ListenOnPort(9000);
     while(1) {
       Sleep(20);
-      ServerWrite(charPlayer.position[0],charPlayer.position[1], 0.0, 0.0, 0.0);
-      ServerRead();
+      ServerWrite(player.x, ball.x, ball.z);
+      enemy.x = ServerRead();
     }
   }
   else {
-    CloseConnection();
     bool connect_status = 0;
     while (connect_status==0) {
       connect_status = ConnectToHost(9000, "127.0.0.1");}
     while(1) {
       Sleep(30);
-      ClientRead();
-      ClientWrite(charPlayer.position[0],charPlayer.position[1]);
+      updateClient(ClientRead());
+      ClientWrite(player.x);
     }
   }
 }
 
-void update(id) {
-  if(id==1) {
-    charEnemy.setPos();
-  }
-  else {
-
-  }
-}
 void setup_player(void) {
   cout << "Enter player number: ";
   std::string id;
   getline(cin,id,'\n');
-  charPlayer.id = std::stoi(id);
+  player.id = std::stoi(id);
+  ball.x = 0.0;
+  ball.z = 15.0;
 }
 
-// Set up the image capture library ESCAPI
-void setup_escapi() {
-	// Initialize the DLL and ask how many webcams it found
-	int devices = setupESCAPI();
-	if(!devices) {
-		cerr << "ESCAPI found no devices.\n";
-		throw runtime_error("setupESCAPI");
-	}
-	// Tell the library where our buffer is and how big it is
-	SimpleCapParams params = { frame_buffer, WIDTH, HEIGHT };
-	if(!initCapture(DEVICE, &params)) {
-		cerr << "initCapture failed, please install a better webcam\n";
-		throw runtime_error("initCapture");
-	}
-}
-
-bool main_loop_iter() {
-	doCapture(DEVICE);
-
-	// If we got a video frame, render it and run the game
-	if(!isCaptureDone(DEVICE)) {
-		/// TODO: Game logic and networking calls go here
-
-		// Tell GLUT to render this frame and manually proceed to the next one
-		glutPostRedisplay();
-		glutMainLoopEvent();
-		return true;
-	}
-	// Can't capture more video, exit the program
-	else {
-		return false;
-	}
-}
 
 int main(int argc, char** argv) {
-	// setup_escapi();
-
   setup_player();
-
   glSetupOpenGL(argc, argv);
   _beginthread(tcp_comm, 0, (void*)1);
   glutMainLoop();
-
-  // keep running until the video source quits or someone closes us
-  // while(main_loop_iter()) { }
-
-
-	// deinitCapture(DEVICE);
   return 0;
 }
 
 void glDisplay() {
-  movePlayer();
-  moveEnemy();
+
+  moveObjects();
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glLoadIdentity();
   gluLookAt(0.0f, 0.0f, -2.0f,
             0.0f, 0.0f,  30.0f,
             0.0f, 1.0f,  2.0f);
-  // vertices for simple textured-quad rendering
-  const struct { float tu, tv; float x, y, z; } vertices[] = {
-    { 0.0f, 0.0f, -1.0f,-1.0f, 0.0f },
-    { 1.0f, 0.0f,  1.0f,-1.0f, 0.0f },
-    { 1.0f, 1.0f,  1.0f, 1.0f, 0.0f },
-    { 0.0f, 1.0f, -1.0f, 1.0f, 0.0f }
-  };
 
 // Movement and Rotation
   drawScene();
   glPushMatrix();
-    charPlayer.apply_T_Matrix();
-  	// glScaled(-1.0, -1.0, 0.0);
-  	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, frame_buffer);
-  	// glInterleavedArrays(GL_T2F_V3F, 0, vertices);
-  	// glDrawArrays(GL_QUADS, 0, 4);
+    player.Tx();
     drawAxes(0);
 	glPopMatrix();
   glPushMatrix();
     glTranslated(0.0,0.0,30.0);
     glRotated(180, 0.0,1.0,0.0);
-    charEnemy.apply_T_Matrix();
-    // glScaled(-1.0, -1.0, 0.0);
-    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, frame_buffer);
-    // glInterleavedArrays(GL_T2F_V3F, 0, vertices);
-    // glDrawArrays(GL_QUADS, 0, 4);
+    enemy.Tx();
     drawAxes(0);
   glPopMatrix();
   glPushMatrix();
-    glTranslated(0.0,0.0,13.0);
     glColor3f(0.0, 1.0, 0.25);
-    glutSolidSphere(0.5, 20, 20);
+    if(player.id==2) {
+      glRotated(180, 0.0,1.0,0.0);
+      glTranslated(0.0,0.0,-30.0);
+    }
+    ball.Txz();
+    glutSolidSphere(0.25, 20, 20);
     glScaled(0.7,0.7,0.7);
     drawAxes(0);
   glPopMatrix();
@@ -144,59 +91,56 @@ void glDisplay() {
 	glutSwapBuffers();
 }
 
+void moveObjects(void){
+  if (player.id==1)
+    moveBall();
+  movePlayer();
+}
+
 void movePlayer(void) {
   if(key_state['a'] == true) {
-    charPlayer.xInc(moveSpeed);
-  }
-  if(key_state['d'] == true) {
-    charPlayer.xDec(moveSpeed);
-  }
-  if(key_state['w'] == true) {
-    charPlayer.yInc(moveSpeed);
+    player.xInc(moveSpeed);
   }
   if(key_state['s'] == true) {
-    charPlayer.yDec(moveSpeed);
-  }
-  if(key_state['z'] == true) {
-    charPlayer.zInc(moveSpeed);
-  }
-  if(key_state['x'] == true) {
-    charPlayer.zDec(moveSpeed);
+    player.xDec(moveSpeed);
   }
 }
 
 void moveEnemy(void) {
   if(key_state['f'] == true) {
-    charEnemy.xDec(moveSpeed);
+    enemy.xDec(moveSpeed);
   }
-  if(key_state['h'] == true) {
-    charEnemy.xInc(moveSpeed);
+  if(key_state['d'] == true) {
+    enemy.xInc(moveSpeed);
   }
-  if(key_state['g'] == true) {
-    charEnemy.yDec(moveSpeed);
+}
+
+void moveBall(void) {
+  if(key_state['j'] == true) {
+      ball.x += moveSpeed;
   }
-  if(key_state['t'] == true) {
-    charEnemy.yInc(moveSpeed);
+  if(key_state['k'] == true) {
+      ball.x -= moveSpeed;
   }
-  if(key_state['z'] == true) {
-    charEnemy.zInc(moveSpeed);
+  if(key_state['i'] == true) {
+      ball.z += moveSpeed;
   }
-  if(key_state['x'] == true) {
-    charEnemy.zDec(moveSpeed);
+  if(key_state['m'] == true) {
+      ball.z -= moveSpeed;
   }
 }
 
 void glKeyboard(unsigned char key, int xw, int yw) {
   key_state[key] = true;
   switch(key) {
-    case'a': case's': case'd': case'w':
+    case'a': case's':
       cout << "Move player\n";
       break;
-    case'f': case'g': case'h': case't':
+    case'd': case'f':
       cout << "Move enemy\n";
       break;
-    case'z': case'x':
-      cout << "Move Z direction\n";
+    case'j': case'k':
+      cout << "Move ball\n";
       break;
     case 'c':
       if(glutClearStatus==0) glutClearStatus = 1;
@@ -226,14 +170,8 @@ void glKeySpecial(int key, int xw, int yw) {
       xpos = xw;
       ypos = HEIGHT - yw;
   switch(key) {
-    case GLUT_KEY_F1:
-      cout << "\nARPong Help File (Press F1 to Resume)\n";
-      cout << "----------------------------\n";
-      cout << "() \n";
-      cout << "() \n";
-      break;
     default:
-      cout << "Special Key Pressed, Value: "<< (int)key << "\n)";
+      // cout << "Special Key Pressed, Value: "<< (int)key << "\n)";
       break;
   }
 }

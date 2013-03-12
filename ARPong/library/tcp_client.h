@@ -3,5 +3,5 @@
 
 bool ConnectToHost(int PortNo, char* IPAddress);
 server_data ClientRead(void);
-void ClientWrite(float x, float y);
+void ClientWrite(float x);
 void CloseConnection();

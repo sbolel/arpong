@@ -57,5 +57,7 @@ void glKeyUpFunc(unsigned char key, int x, int y);
 void glKeySpecial(int key, int xw, int yw);
 void drawText2D(void *pFont, double x0, double y0, const char *pString);
 
+void moveObjects(void);
 void movePlayer(void);
 void moveEnemy(void);
+void moveBall(void);

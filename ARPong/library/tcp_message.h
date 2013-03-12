@@ -1,9 +1,13 @@
 #pragma once
 
 struct client_data {
-  float x, y;
+  float x;
 };
 
 struct server_data {
-  float s_x, s_y, b_x, b_y, b_z;
+  float x, b_x, b_z;
+};
+
+struct ball_data {
+  float x, z;
 };
