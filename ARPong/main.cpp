@@ -1,4 +1,5 @@
 #include "ARPong.h"
+#pragma comment(lib, "ws2_32.lib")
 
 #include <algorithm>
 #include <stdlib.h>
@@ -15,7 +16,6 @@
 #include <GL/freeglut.h>
 #include <escapi.h>
 
-
 #include "library/tcp_message.h"
 #include "library/tcp_server.h"
 #include "library/tcp_client.h"
@@ -26,17 +26,11 @@
 #include "library/image/video.h"
 #include "library/image/objectDetection.h"
 
-
 using namespace std;
 
 const double pi = atan(1.0)*4.0;
 const double rad = (pi/180.0);
 const GLfloat moveSpeed=0.001;
-// Video variables
-const char* TRAINING_FILE = "../skin_rgb.txt";
-video_stream stream;
-frame dtn_frame;
-histogram hist;
 // Player variables
 player_class player(1);
 player_class enemy(2);
@@ -49,9 +43,36 @@ GLfloat ambient_intensity[] = { 0.3, 0.3, 0.3, 1.0 };
 static int glutClearStatus = 1;
 static int glutAnimationStatus = 1;
 static bool key_state[256] = {false};
+
+// Video variables
+const char* TRAINING_FILE = "../skin_rgb.txt";
+video_stream stream;
+frame dtn_frame;
+histogram hist;
 bool window_closed = false;
+double tld = .000001;   // detection threshold
 
+class sliding_window {
+  enum { SIZE = 10 };
+  list<glm::ivec2> history;
+  public:
+    void push_value(glm::ivec2 p) {
+      history.push_back(p);
+      if(history.size() > SIZE) {
+        history.pop_front();
+      }
+    }
+    glm::ivec2 value() const {
+      glm::vec2 tmp(0);
+      int factor = 1;
+      for(auto& p : history) {
+        tmp += glm::vec2(p) / pow(2.0f, factor++);
+      }
+      return glm::ivec2(tmp);
+    }
+};
 
+sliding_window cursor_pos;
 
 void updateClient(server_data sd){
   enemy.x = sd.x;
@@ -89,21 +110,46 @@ void tcp_comm(void *) {
   }
 }
 
-void setup_player(void) {
-  cout << "Enter player number: ";
-  std::string id;
-  getline(cin,id,'\n');
-  player.id = std::stoi(id);
-  ball.x = 0.0;
-  ball.z = ARENA_LENGTH/2;
+void on_close() {
+  window_closed = true;
+  stream.cleanup();
 }
 
+frame detect_skin(const frame& in) {
+  dtn_frame = in;
+
+  const rgb_byte ZERO = { };
+  for(int y = HEIGHT - 1; y; --y) {
+    for(int x = WIDTH - 1; x; --x) {
+      auto orig = dtn_frame.get_pixel(x, y);
+      rgb hist_in = { orig[2], orig[1], orig[0] };
+      if(hist.value(hist_in) < tld) {
+        orig[0] = orig[1] = orig[2] = 0;
+      }
+    }
+  }
+
+  return dtn_frame;
+}
+
+bool main_loop_iter() {
+  if(!window_closed && stream.next_frame()) {
+    dtn_frame = detect_skin(stream.current_frame);
+    cursor_pos.push_value(calculate_median(dtn_frame));
+    glutPostRedisplay();
+    glutMainLoopEvent();
+    return true;
+  }
+  else {
+    return false;
+  }
+}
 
 int main(int argc, char** argv) {
   setup_player();
   glSetupOpenGL(argc, argv);
   _beginthread(tcp_comm, 0, (void*)1);
-  glutMainLoop();
+  while(main_loop_iter()) { }
   return 0;
 }
 
@@ -263,6 +309,15 @@ void glSetupOpenGL(int argc, char** argv) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glClearColor(0.03, 0.03, 0.2, 0.0);
   glRunTimer(1);
+}
+
+void setup_player(void) {
+  cout << "Enter player number: ";
+  std::string id;
+  getline(cin,id,'\n');
+  player.id = std::stoi(id);
+  ball.x = 0.0;
+  ball.z = ARENA_LENGTH/2;
 }
 
 void moveObjects(void){
