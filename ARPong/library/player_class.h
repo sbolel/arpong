@@ -1,11 +1,14 @@
 #pragma once
 #include <GL/freeglut.h>
+#include "arena.h"
 
 class player_class
 {
 public:
   GLint   id;
   GLfloat x;
+  GLfloat x_max;
+  GLfloat x_min;
   GLfloat z;
   GLint   score;
 
@@ -18,7 +21,7 @@ public:
   void Tx(void);
   void Txz(void);
 
-  void xInc(GLfloat pos) {x += pos;}
-  void xDec(GLfloat pos) {x -= pos;}
+  void xInc(GLfloat pos);
+  void xDec(GLfloat pos);
 
 };

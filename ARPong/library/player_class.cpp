@@ -7,29 +7,21 @@ player_class::player_class(void) { reset(); }
 player_class::player_class(int player_id)
 {
 	reset();
-	// switch (player_id)
-	// {
-	// 	case 1:
-	// 		id = 1;
-	// 		pos_max[0] = 5.0;
-	// 		pos_max[1] = 0.0;
-	// 		pos_max[2] = 0.0;
-	// 		pos_min[0] = -5.0;
-	// 		pos_min[1] = 0.0;
-	// 		pos_min[2] = 0.0;
-	// 		break;
-	// 	case 2:
-	// 		id = 2;
-	// 		pos_max[0] = 5.0;
-	// 		pos_max[1] = 0.0;
-	// 		pos_max[2] = 0.0;
-	// 		pos_min[0] = -5.0;
-	// 		pos_min[1] = 0.0;
-	// 		pos_min[2] = 0.0;
-	// 		break;
-	// 	default:
-	// 		break;
-	// }
+	switch (player_id)
+	{
+		case 1:
+			id = 1;
+			x_max = ARENA_WIDTH;
+			x_min = -ARENA_WIDTH;
+			break;
+		case 2:
+			id = 2;
+			x_max = -ARENA_WIDTH;
+			x_min = ARENA_WIDTH;
+			break;
+		default:
+			break;
+	}
 }
 
 void player_class::reset(void)
@@ -48,7 +40,19 @@ void player_class::Txz(void)
 	glTranslated(x, 0.0, z);
 }
 
+void player_class::xInc(GLfloat pos)
+{
+	GLfloat x_next = x + pos;
+	if ((x_next) < x_max)
+		x = x_next;
+}
 
+void player_class::xDec(GLfloat pos)
+{
+	GLfloat x_next = x - pos;
+	if (x_next > x_min)
+		x = x_next;
+}
 
 // void player_class::setPos(float x) {
 
