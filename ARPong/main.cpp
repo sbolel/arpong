@@ -357,6 +357,7 @@ void setup_player(void) {
 void moveObjects(void){
   if (player.id==1) {
     resetBall();
+    updateBall();
     moveBall();
   }
   movePlayer();
@@ -414,11 +415,11 @@ void startBall(void) {
   scored_status = 0;
   if (scorer_id==1) {
     ball.x_vel = 0.0f;
-    ball.z_vel = 0.1f;
+    ball.z_vel = BALL_Z_VEL;
   }
   else {
     ball.x_vel = 0.0f;
-    ball.z_vel = -0.1f;
+    ball.z_vel = -BALL_Z_VEL;
   }
 }
 

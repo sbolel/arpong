@@ -7,3 +7,5 @@ const GLfloat WALL_THICK = 0.1f;
 const GLfloat PL_W = 0.35f;
 const GLfloat PL_D = 0.02f;
 const GLfloat PL_H = 0.1f;
+
+const GLfloat BALL_Z_VEL = 0.015f;
