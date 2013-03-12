@@ -74,3 +74,6 @@ void moveObjects(void);
 void movePlayer(void);
 void moveEnemy(void);
 void moveBall(void);
+void resetBall(void);
+void startBall(void);
+void updateBall(void);

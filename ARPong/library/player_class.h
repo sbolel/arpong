@@ -13,6 +13,8 @@ public:
   GLfloat z_max;
   GLfloat z_min;
   GLint   score;
+  GLfloat x_vel;
+  GLfloat z_vel;
 
   ~player_class(void);
    player_class(void);

@@ -74,7 +74,7 @@ void drawScene(void) {
 
   //floor
     glBegin(GL_QUADS);  // left
-      glColor3f(0.3f, 0.1f, 0.1f);   // dark
+      glColor3f(0.1f, 0.1f, 0.5f);   // dark
       glVertex3f( +ARENA_WIDTH, -ARENA_HEIGHT, 0.0f);
       glVertex3f( -ARENA_WIDTH, -ARENA_HEIGHT, 0.0f);
       glVertex3f( -ARENA_WIDTH, -ARENA_HEIGHT, ARENA_LENGTH);
@@ -92,5 +92,45 @@ void drawScene(void) {
     //   glVertex3f( 10.0, -6.0, -50.0);
     //   glVertex3f( 10.0, 6.0, -50.0);
     // glEnd();
+  glPopMatrix();
+}
+
+void drawPlayer(void){
+  glPushMatrix();
+    glTranslated(0.0,0.0,-PL_D/2);
+    glBegin(GL_QUADS);  // back
+      glColor3f(0.3f, 0.6f, 0.3f);
+      glVertex3f(-PL_W,  PL_H, -PL_D);
+      glVertex3f(-PL_W, -PL_H, -PL_D);
+      glVertex3f( PL_W, -PL_H, -PL_D);
+      glVertex3f( PL_W,  PL_H, -PL_D);
+    glEnd();
+    glBegin(GL_QUADS);  // top
+    glColor3f(0.5f, 1.0f, 0.5f);
+      glVertex3f( PL_W, PL_H, -PL_D);
+      glVertex3f(-PL_W, PL_H, -PL_D);
+      glVertex3f(-PL_W, PL_H,  PL_D);
+      glVertex3f( PL_W, PL_H,  PL_D);
+    glEnd();
+  glPopMatrix();
+}
+
+void drawEnemy(void){
+  glPushMatrix();
+    glTranslated(0.0,0.0,PL_D/2);
+    glBegin(GL_QUADS);  // front
+      glColor3f(1.0f, 0.2f, 0.2f);
+      glVertex3f( PL_W,  PL_H, -PL_D);
+      glVertex3f(-PL_W,  PL_H, -PL_D);
+      glVertex3f(-PL_W, -PL_H, -PL_D);
+      glVertex3f( PL_W, -PL_H, -PL_D);
+    glEnd();
+    glBegin(GL_QUADS);  // top
+    glColor3f(1.0f, 0.1f, 0.1f);
+      glVertex3f( PL_W, PL_H, -PL_D);
+      glVertex3f(-PL_W, PL_H, -PL_D);
+      glVertex3f(-PL_W, PL_H,  PL_D);
+      glVertex3f( PL_W, PL_H,  PL_D);
+    glEnd();
   glPopMatrix();
 }

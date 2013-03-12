@@ -10,6 +10,7 @@
 #define helv18 GLUT_BITMAP_HELVETICA_18
 
 
-
 void drawScene(void);
+void drawPlayer(void);
+void drawEnemy(void);
 void drawAxes(int colr);

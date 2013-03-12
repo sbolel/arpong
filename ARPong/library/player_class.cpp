@@ -10,6 +10,8 @@ player_class::player_class(int player_id)
 	id = player_id;
 	x_max = ARENA_WIDTH;
 	x_min = -ARENA_WIDTH;
+  x_vel = 0.0f;
+  z_vel = 0.0f;
 	if (player_id==3) {
 		z_min = 0.0;
 		z_max = ARENA_LENGTH;
@@ -59,13 +61,3 @@ void player_class::zDec(GLfloat dz)
 	if (z_next > z_min)
 		z = z_next;
 }
-
-
-// void player_class::setPos(float x) {
-
-// }
-
-// void player_class::drawPaddle(void)
-// {
-
-// }

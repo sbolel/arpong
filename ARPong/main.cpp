@@ -42,6 +42,8 @@ GLfloat ambient_intensity[] = { 0.3, 0.3, 0.3, 1.0 };
 static int glutClearStatus = 1;
 static int glutAnimationStatus = 1;
 static bool key_state[256] = {false};
+static int scorer_id = 1;
+static int scored_status = 1;
 
 // Video variables
 const char* TRAINING_FILE = "../skin_rgb.txt";
@@ -197,12 +199,14 @@ void glDisplay() {
   drawScene();
   glPushMatrix();
     player.Tx();
+    drawPlayer();
     drawAxes(0);
 	glPopMatrix();
   glPushMatrix();
     glTranslated(0.0,0.0,ARENA_LENGTH);
     glRotated(180, 0.0,1.0,0.0);
     enemy.Tx();
+    drawEnemy();
     drawAxes(0);
   glPopMatrix();
   glPushMatrix();
@@ -251,7 +255,10 @@ void glKeyboard(unsigned char key, int xw, int yw) {
       if(glutAnimationStatus ==1) glRunTimer(0);
       else                        glRunTimer(1);
       break;
-    case ' ': case 27: case 'Q': case 'q':
+    case ' ':
+      startBall();
+      break;
+    case 27: case 'Q': case 'q':
       exit(0);
       break;
     default:
@@ -335,7 +342,7 @@ void glSetupOpenGL(int argc, char** argv) {
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glClearColor(0.03, 0.03, 0.2, 0.0);
+  glClearColor(0.01f, 0.01f, 0.05f, 0.0);
   glRunTimer(1);
 }
 
@@ -344,13 +351,14 @@ void setup_player(void) {
   std::string id;
   getline(cin,id,'\n');
   player.id = std::stoi(id);
-  ball.x = 0.0;
-  ball.z = ARENA_LENGTH/2;
+  resetBall();
 }
 
 void moveObjects(void){
-  if (player.id==1)
+  if (player.id==1) {
+    resetBall();
     moveBall();
+  }
   movePlayer();
 }
 
@@ -385,4 +393,36 @@ void moveBall(void) {
   if(key_state['m'] == true) {
       ball.zDec(moveSpeed);
   }
+}
+
+void resetBall(void) {
+  if (scored_status==1) {
+    ball.x_vel = 0.0f;
+    ball.z_vel = 0.0f;
+    if (scorer_id==1) {
+      ball.x = player.x;
+      ball.z = 0.0;
+    }
+    else {
+      ball.x = enemy.x;
+      ball.z = ARENA_LENGTH;
+    }
+  }
+}
+
+void startBall(void) {
+  scored_status = 0;
+  if (scorer_id==1) {
+    ball.x_vel = 0.0f;
+    ball.z_vel = 0.1f;
+  }
+  else {
+    ball.x_vel = 0.0f;
+    ball.z_vel = -0.1f;
+  }
+}
+
+void updateBall(void) {
+  ball.z += ball.z_vel;
+  ball.x += ball.x_vel;
 }
