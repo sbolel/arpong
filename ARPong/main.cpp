@@ -2,17 +2,24 @@
 using namespace std;
 
 void tcp_comm(void *) {
+  WSACleanup();
   cout << "---------------------------------\n";
   if (charPlayer.id==1) {
-    cout << "Player 1 - Server - TCP Listening on port 9000\n";
     ListenOnPort(9000);
+    while(1) {
+      Sleep(100);
+      ServerRead();
+    }
   }
   else {
-    cout << "Player 2 - Client - TCP Connecting to 127.0.0.1:9000\n";
-    ConnectToHost(9000, "127.0.0.1");
+    CloseConnection();
+    bool connect_status = 0;
+    while (connect_status==0) {
+      connect_status = ConnectToHost(9000, "127.0.0.1");}
     while(1) {
-      Sleep(10);
-      ClientRead();
+      Sleep(100);
+      // ClientRead();
+      ClientSend(charPlayer.position[0],charPlayer.position[1]);
     }
   }
 }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <winsock.h>
 using namespace std;
 
@@ -7,6 +8,8 @@ SOCKET socket_client; //Socket handle
 //CONNECTTOHOST – Connects to a remote host
 bool ConnectToHost(int PortNo, char* IPAddress)
 {
+    cout << "Player 2 - Client - TCP Connecting to Server on port 9000\n";
+
     //Start up Winsock…
     WSADATA wsadata;
 
@@ -28,7 +31,7 @@ bool ConnectToHost(int PortNo, char* IPAddress)
 
     target.sin_family = AF_INET; // address family Internet
     target.sin_port = htons (PortNo); //Port to connect on
-    target.sin_addr.s_addr = inet_addr (IPAddress); //Target IP
+    target.sin_addr.s_addr = inet_addr("127.0.0.1");; //Target IP
 
     socket_client = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP); //Create socket
     if (socket_client == INVALID_SOCKET)
@@ -40,9 +43,11 @@ bool ConnectToHost(int PortNo, char* IPAddress)
 
     if (connect(socket_client, (SOCKADDR *)&target, sizeof(target)) == SOCKET_ERROR)
     {
+        cout << "Client connect failure\n";
         return false; //Couldn't connect
     }
     else
+        cout << "Client connect success\n";
         return true; //Success
 }
 
@@ -57,6 +62,15 @@ void ClientRead(void)
   memset(client_buffer, 0, sizeof(client_buffer)); //Clear the client_buffer
   recv (socket_client, client_buffer, sizeof(client_buffer)-1, 0);
   cout << client_buffer[0] << client_buffer[1] << client_buffer[2] << client_buffer[3] << client_buffer[4];
+}
+
+void ClientSend(int x, int y)
+{
+  int nret;
+  char buffer[256]={0};
+  strcpy(buffer, "Pretend this is important data.");
+  nret = send(socket_client, buffer, strlen(buffer),0);
+  cout<<"nret: "<<nret;
 }
 
 //CLOSECONNECTION – shuts down the socket and closes any connection on it

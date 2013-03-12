@@ -4,6 +4,7 @@
 
 bool ConnectToHost(int PortNo, char* IPAddress);
 void ClientRead(void);
+void ClientSend(int x, int y);
 void CloseConnection();
 
 #endif
