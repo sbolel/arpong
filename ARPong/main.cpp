@@ -104,6 +104,7 @@ void glReshape( int width, int height ) {
   glViewport(0,0, WIDTH, HEIGHT);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
+  glRotated(-45.0,1.0,0.0,0.0);
   gluPerspective (140.0, (WIDTH/HEIGHT), 0.5, ARENA_LENGTH+0.75f);
   glMatrixMode(GL_MODELVIEW);
   glutPostRedisplay();
