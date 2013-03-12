@@ -77,4 +77,5 @@ void resetBall(void);
 void startBall(void);
 void updateBall(void);
 void checkWinner(void);
+void updateScoreStatus(void);
 void checkCollision(void);

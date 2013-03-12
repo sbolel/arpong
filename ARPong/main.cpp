@@ -44,6 +44,7 @@ static int glutAnimationStatus = 1;
 static bool key_state[256] = {false};
 static int scorer_id = 1;
 static int scored_status = 1;
+static int started_status = 0;
 
 // Video variables
 const char* TRAINING_FILE = "../skin_rgb.txt";
@@ -355,7 +356,6 @@ void setup_player(void) {
 
 void moveObjects(void){
   if (player.id==1) {
-    resetBall();
     updateBall();
   }
   movePlayer();
@@ -380,22 +380,14 @@ void moveEnemy(void) {
 }
 
 void resetBall(void) {
-  if (scored_status==1) {
-    ball.x_vel = 0.0f;
-    ball.z_vel = 0.0f;
-    if (scorer_id==1) {
-      ball.x = player.x;
-      ball.z = 0.0;
-    }
-    else {
-      ball.x = enemy.x;
-      ball.z = ARENA_LENGTH;
-    }
-  }
+  scored_status=1;
+  started_status=0;
+  ball.x_vel = 0.0f;
+  ball.z_vel = 0.0f;
 }
 
 void startBall(void) {
-  scored_status = 0;
+  scored_status=0;
   if (scorer_id==1) {
     ball.x_vel = 0.0f;
     ball.z_vel = BALL_Z_VEL;
@@ -409,32 +401,52 @@ void startBall(void) {
 void updateBall(void) {
   ball.z += ball.z_vel;
   ball.x += ball.x_vel;
-  checkCollision();
   checkWinner();
+  checkCollision();
+}
+
+void updateScoreStatus(void) {
+  if (scored_status==0) {
+    if (scorer_id==1 && ball.z>=1.0f)
+      started_status = 1;
+    if (scorer_id==2 && ball.z<=ARENA_LENGTH-1.0f)
+      started_status = 1;
+  }
 }
 
 void checkCollision(void) {
-  // enemy collision
-  if ((ball.z>=ARENA_LENGTH-0.1)&&(ball.z<=ARENA_LENGTH+0.1) && ( (ball.x<=(enemy.x+PL_W/2)) && (ball.x>=(enemy.x-PL_W/2)))) {
-    ball.z_vel *= -1.0;
-  }
-  // player collision
-  if ((ball.z>=-0.1)&&(ball.z<=+0.1) && ( (ball.x<=(player.x+PL_W/2)) && (ball.x>=(player.x-PL_W/2)))) {
-    ball.z_vel *= -1.0;
+  updateScoreStatus();
+  if (started_status==1) {
+    // enemy collision
+    if ((ball.z>=ARENA_LENGTH-0.1)&&(ball.z<=ARENA_LENGTH+0.1) && ( (ball.x<=(enemy.x+0.1+PL_W/2)) && (ball.x>=(enemy.x-0.1-PL_W/2)))) {
+      ball.z_vel *= -1.0;
+    }
+    // player collision
+    if ((ball.z>=-0.1)&&(ball.z<=+0.1) && ( (ball.x<=(player.x+0.1+PL_W/2)) && (ball.x>=(player.x-0.1-PL_W/2)))) {
+      ball.z_vel *= -1.0;
+    }
   }
 }
 
 void checkWinner() {
-  if (ball.z>(ARENA_LENGTH+0.5)) {
+  if (ball.z>(ARENA_LENGTH+0.2)) {
     player.score += 1;
     scorer_id = player.id;
-    scored_status=1;
     resetBall();
   }
-  if (ball.z<(-0.5)) {
+  if (ball.z<(-0.2)) {
     enemy.score += 1;
     scorer_id = enemy.id;
-    scored_status=1;
     resetBall();
+  }
+  if (scored_status==1) {
+    if (scorer_id==1) {
+      ball.x = player.x;
+      ball.z = 0.0;
+    }
+    else {
+      ball.x = enemy.x;
+      ball.z = ARENA_LENGTH;
+    }
   }
 }
