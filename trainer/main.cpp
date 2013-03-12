@@ -35,13 +35,6 @@ void display() {
 	glScaled(-1.0, -1.0, 0.0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, buffer);
 
-	if(color.r > 0) glColor3fv((GLfloat*)&color);
-	/*glColor3f(1.0, 0.0, 0.0);
-	glBegin(GL_POINTS);
-		glVertex2f((float)last_click.x, (float)last_click.y);
-	glEnd();
-	glClear(GL_COLOR_BUFFER_BIT);*/
-
 	glInterleavedArrays(GL_T2F_V3F, 0, vertices);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glPopMatrix();

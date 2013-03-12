@@ -35,8 +35,15 @@ namespace {
 histogram::histogram() : 
 	h_(BINS, vector<double>(BINS, 0.0)) { }
 
+int rgb_min = 30;
+int rgb_max = 255 - rgb_min;
+
 // Get the value for a given pixel
 double histogram::value(const rgb& color) {
+	if((color.b < rgb_min && color.g < rgb_min && color.r < rgb_min) ||
+	   (color.b > rgb_max && color.g > rgb_max && color.r > rgb_max)) {
+		   return 0;
+	}
 	rg rg = rgb_to_rg(color);
 	return h_[project(rg.r, 1.0)][project(rg.g, 1.0)];
 }

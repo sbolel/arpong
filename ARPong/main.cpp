@@ -1,14 +1,15 @@
 #include "ARPong.h"
 #include "histogram.h"
-#include "morph.h"
 #include "objectDetection.h"
 #include "video.h"
 
 #include <GL/freeglut.h>
+#include <glm/glm.hpp>
 
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <list>
 
 using namespace std;
 
@@ -24,9 +25,32 @@ GLuint texture;
 bool window_closed = false;
 
 // detection threshold
-double tld = .00005;
+double tld = .000001;
 
-center_t median = { };
+class sliding_window {
+	enum { SIZE = 10 };
+	list<glm::ivec2> history;
+
+public:
+	void push_value(glm::ivec2 p) {
+		history.push_back(p);
+		if(history.size() > SIZE) {
+			history.pop_front();
+		}
+	}
+
+	glm::ivec2 value() const {
+		glm::vec2 tmp(0);
+		int factor = 1;
+		for(auto& p : history) {
+			tmp += glm::vec2(p) / pow(2.0f, factor++);
+		}
+
+		return glm::ivec2(tmp);
+	}
+};
+
+sliding_window cursor_pos;
 
 // OpenGL display function, called whenever a new frame is requested
 void display() {
@@ -52,8 +76,10 @@ void display() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glColor3f(1.0, 0.0, 0.0);
 	glPointSize(5.0);
+
+	auto cur = cursor_pos.value();
 	glBegin(GL_POINTS);
-		glVertex2d(median.x * 2. / WIDTH - 1., median.y * 2. / HEIGHT - 1.);
+		glVertex2d(cur.x * 2. / WIDTH - 1., cur.y * 2. / HEIGHT - 1.);
 	glEnd();
 	glPopMatrix();
 
@@ -66,8 +92,8 @@ void on_close() {
 	stream.cleanup();
 }
 
-void detect_skin() {
-	dtn_frame = stream.current_frame;
+frame detect_skin(const frame& in) {
+	dtn_frame = in;
 
 	const rgb_byte ZERO = { };
 	for(int y = HEIGHT - 1; y; --y) {
@@ -79,6 +105,8 @@ void detect_skin() {
 			}
 		}
 	}
+
+	return dtn_frame;
 }
 
 bool main_loop_iter() {
@@ -86,9 +114,8 @@ bool main_loop_iter() {
 	if(!window_closed && stream.next_frame()) {
 		/// TODO: Game logic and networking calls go here
 
-		detect_skin();
-		erode(dtn_frame);
-		median = calculate_median(dtn_frame);
+		dtn_frame = detect_skin(stream.current_frame);
+		cursor_pos.push_value(calculate_median(dtn_frame));
 
 		// Tell GLUT to render this frame and manually proceed to the next one
 		glutPostRedisplay();

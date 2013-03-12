@@ -75,14 +75,12 @@
     <ClCompile Include="escapi.cpp" />
     <ClCompile Include="histogram.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="morph.cpp" />
     <ClCompile Include="objectDetection.cpp" />
     <ClCompile Include="video.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ARPong.h" />
     <ClInclude Include="histogram.h" />
-    <ClInclude Include="morph.h" />
     <ClInclude Include="objectDetection.h" />
     <ClInclude Include="video.h" />
   </ItemGroup>
