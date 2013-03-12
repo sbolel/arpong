@@ -244,15 +244,15 @@ void moveEnemy(void) {
 
 void moveBall(void) {
   if(key_state['j'] == true) {
-      ball.x += moveSpeed;
+      ball.xInc(moveSpeed);
   }
   if(key_state['k'] == true) {
-      ball.x -= moveSpeed;
+      ball.xDec(moveSpeed);
   }
   if(key_state['i'] == true) {
-      ball.z += moveSpeed;
+      ball.zInc(moveSpeed);
   }
   if(key_state['m'] == true) {
-      ball.z -= moveSpeed;
+      ball.zDec(moveSpeed);
   }
 }

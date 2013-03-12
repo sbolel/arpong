@@ -7,20 +7,12 @@ player_class::player_class(void) { reset(); }
 player_class::player_class(int player_id)
 {
 	reset();
-	switch (player_id)
-	{
-		case 1:
-			id = 1;
-			x_max = ARENA_WIDTH;
-			x_min = -ARENA_WIDTH;
-			break;
-		case 2:
-			id = 2;
-			x_max = -ARENA_WIDTH;
-			x_min = ARENA_WIDTH;
-			break;
-		default:
-			break;
+	id = player_id;
+	x_max = ARENA_WIDTH;
+	x_min = -ARENA_WIDTH;
+	if (player_id==3) {
+		z_min = 0.0;
+		z_max = ARENA_LENGTH;
 	}
 }
 
@@ -40,19 +32,34 @@ void player_class::Txz(void)
 	glTranslated(x, 0.0, z);
 }
 
-void player_class::xInc(GLfloat pos)
+void player_class::xInc(GLfloat dx)
 {
-	GLfloat x_next = x + pos;
+	GLfloat x_next = x + dx;
 	if ((x_next) < x_max)
 		x = x_next;
 }
 
-void player_class::xDec(GLfloat pos)
+void player_class::xDec(GLfloat dx)
 {
-	GLfloat x_next = x - pos;
+	GLfloat x_next = x - dx;
 	if (x_next > x_min)
 		x = x_next;
 }
+
+void player_class::zInc(GLfloat dz)
+{
+	GLfloat z_next = z + dz;
+	if ((z_next) < z_max)
+		z = z_next;
+}
+
+void player_class::zDec(GLfloat dz)
+{
+	GLfloat z_next = z - dz;
+	if (z_next > z_min)
+		z = z_next;
+}
+
 
 // void player_class::setPos(float x) {
 

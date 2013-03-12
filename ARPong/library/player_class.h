@@ -10,6 +10,8 @@ public:
   GLfloat x_max;
   GLfloat x_min;
   GLfloat z;
+  GLfloat z_max;
+  GLfloat z_min;
   GLint   score;
 
   ~player_class(void);
@@ -23,5 +25,6 @@ public:
 
   void xInc(GLfloat pos);
   void xDec(GLfloat pos);
-
+  void zInc(GLfloat pos);
+  void zDec(GLfloat pos);
 };
