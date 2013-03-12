@@ -1,10 +1,7 @@
-#ifndef TCP_CLIENT_H_
-#define TCP_CLIENT_H_
-
+#pragma once
+#include "tcp_message.h"
 
 bool ConnectToHost(int PortNo, char* IPAddress);
 void ClientRead(void);
-void ClientSend(int x, int y);
+void ClientWrite(float x, float y);
 void CloseConnection();
-
-#endif

@@ -13,6 +13,7 @@
 #include <GL/freeglut.h>
 #include <escapi.h>
 
+#include "library/tcp_message.h"
 #include "library/tcp_server.h"
 #include "library/tcp_client.h"
 #include "library/player_class.h"

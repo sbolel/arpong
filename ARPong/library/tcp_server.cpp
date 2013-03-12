@@ -1,3 +1,4 @@
+#include "tcp_server.h"
 #include <iostream>
 #include <sstream>
 #include <winsock.h>
@@ -56,14 +57,18 @@ int ListenOnPort(int portno)
   //Don't forget to clean up with CloseConnection()!
 }
 
+
 void ServerRead(void)
 {
+  client_data d = { };
   int nret;
-  char buffer[64] = {0};
-  nret = recv(theClient,buffer,64,0);
-  cout<<"Received Client Coordinates: ";
-  for (int i=0;i<64;i++){
-    cout << buffer[i];
-  }
-  cout << "nret: "<< nret << "\n";
+  nret = recv(theClient, (char*)&d, sizeof(d),0);
+  cout<<"Client coordinates: ["<< d.x << "," << d.y << "]" << "\n";
+}
+
+void ServerWrite(float sx, float sy, float bx, float by, float bz)
+{
+  int nret;
+  server_data d = { sx, sy, bx, by, bz };
+  nret = send(theClient, (char*)&d, sizeof(d),0);
 }

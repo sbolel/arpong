@@ -1,5 +1,5 @@
-#ifndef TCP_SERVER_H_
-#define TCP_SERVER_H_
+#pragma once
+#include "tcp_message.h"
 
 #define SOCK_STREAM      1
 #define SOCK_DGRAM      2
@@ -9,5 +9,4 @@
 
 int ListenOnPort(int portno);
 void ServerRead(void);
-
-#endif
+void ServerWrite(float cx, float cy, float bx, float by, float bz);

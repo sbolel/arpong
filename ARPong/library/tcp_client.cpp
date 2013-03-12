@@ -1,3 +1,4 @@
+#include "tcp_server.h"
 #include <iostream>
 #include <sstream>
 #include <winsock.h>
@@ -53,24 +54,17 @@ bool ConnectToHost(int PortNo, char* IPAddress)
 
 void ClientRead(void)
 {
-  char client_buffer[5];
-  // client_buffer[0]: server X pos
-  // client_buffer[1]: server Y pos
-  // client_buffer[2]: ball X pos
-  // client_buffer[3]: ball Y pos
-  // client_buffer[4]: ball Z pos
-  memset(client_buffer, 0, sizeof(client_buffer)); //Clear the client_buffer
-  recv (socket_client, client_buffer, sizeof(client_buffer)-1, 0);
-  cout << client_buffer[0] << client_buffer[1] << client_buffer[2] << client_buffer[3] << client_buffer[4];
+  server_data d = { };
+  int nret;;
+  nret = recv(socket_client, (char*)&d, sizeof(d),0);
+  cout<<"Server: ["<< d.s_x << "," << d.s_y << "]" << " Ball: [" <<  d.b_x << "," << d.b_y << "," << d.b_z << "]\n";
 }
 
-void ClientSend(int x, int y)
+void ClientWrite(float x, float y)
 {
   int nret;
-  char buffer[64]={0};
-  sprintf(buffer, "%d,%d", x, y);
-  nret = send(socket_client, buffer, strlen(buffer),0);
-  cout << "nret: "<< nret << "\n";
+  client_data d = { x, y };
+  nret = send(socket_client, (char*)&d, sizeof(d),0);
 }
 
 //CLOSECONNECTION – shuts down the socket and closes any connection on it

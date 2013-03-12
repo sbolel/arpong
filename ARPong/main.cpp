@@ -7,7 +7,8 @@ void tcp_comm(void *) {
   if (charPlayer.id==1) {
     ListenOnPort(9000);
     while(1) {
-      Sleep(50);
+      Sleep(20);
+      ServerWrite(charPlayer.position[0],charPlayer.position[1], 0.0, 0.0, 0.0);
       ServerRead();
     }
   }
@@ -17,9 +18,9 @@ void tcp_comm(void *) {
     while (connect_status==0) {
       connect_status = ConnectToHost(9000, "127.0.0.1");}
     while(1) {
-      Sleep(100);
-      // ClientRead();
-      ClientSend(charPlayer.position[0],charPlayer.position[1]);
+      Sleep(30);
+      ClientRead();
+      ClientWrite(charPlayer.position[0],charPlayer.position[1]);
     }
   }
 }
