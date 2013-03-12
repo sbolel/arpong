@@ -44,6 +44,10 @@ void player_class::apply_T_Matrix(void)
 	glTranslated(position[0], position[1], position[2]);
 }
 
+void player_class::setPos(float x) {
+
+}
+
 // void player_class::drawPaddle(void)
 // {
 

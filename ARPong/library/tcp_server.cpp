@@ -58,12 +58,13 @@ int ListenOnPort(int portno)
 }
 
 
-void ServerRead(void)
+client_data ServerRead(void)
 {
   client_data d = { };
   int nret;
   nret = recv(theClient, (char*)&d, sizeof(d),0);
   cout<<"Client coordinates: ["<< d.x << "," << d.y << "]" << "\n";
+  return d;
 }
 
 void ServerWrite(float sx, float sy, float bx, float by, float bz)

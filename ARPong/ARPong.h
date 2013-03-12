@@ -41,10 +41,6 @@ static int glutAnimationStatus = 1;
 static bool key_state[256] = {false};
 
 
-// Player and Enemy objects
-player_class charPlayer(1);
-player_class charEnemy(2);
-
 GLfloat sun_direction[] = { 0.0, 2.0, -1.0, 1.0 };
 GLfloat sun_intensity[] = { 0.7, 0.7, 0.7, 1.0 };
 GLfloat ambient_intensity[] = { 0.3, 0.3, 0.3, 1.0 };

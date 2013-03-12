@@ -1,6 +1,10 @@
 #include "ARPong.h"
 using namespace std;
 
+// Global player variables
+player_class charPlayer(1);
+player_class charEnemy(2);
+
 void tcp_comm(void *) {
   WSACleanup();
   cout << "---------------------------------\n";
@@ -25,6 +29,14 @@ void tcp_comm(void *) {
   }
 }
 
+void update(id) {
+  if(id==1) {
+    charEnemy.setPos();
+  }
+  else {
+
+  }
+}
 void setup_player(void) {
   cout << "Enter player number: ";
   std::string id;

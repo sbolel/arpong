@@ -52,12 +52,13 @@ bool ConnectToHost(int PortNo, char* IPAddress)
         return true; //Success
 }
 
-void ClientRead(void)
+server_data ClientRead(void)
 {
   server_data d = { };
   int nret;;
   nret = recv(socket_client, (char*)&d, sizeof(d),0);
   cout<<"Server: ["<< d.s_x << "," << d.s_y << "]" << " Ball: [" <<  d.b_x << "," << d.b_y << "," << d.b_z << "]\n";
+  return d;
 }
 
 void ClientWrite(float x, float y)

@@ -30,5 +30,4 @@ public:
   void yDec(GLfloat pos) {position[1] -= pos;}
   void zDec(GLfloat pos) {position[2] -= pos;}
 
-
 };
