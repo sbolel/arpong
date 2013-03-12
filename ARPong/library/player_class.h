@@ -27,4 +27,5 @@ public:
   void xDec(GLfloat pos);
   void zInc(GLfloat pos);
   void zDec(GLfloat pos);
+  void draw(void);
 };

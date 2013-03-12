@@ -21,7 +21,6 @@
 #include "library/tcp_client.h"
 #include "library/player_class.h"
 #include "library/glut_draw.h"
-#include "library/glut_materials_lights.h"
 #include "library/image/histogram.h"
 #include "library/image/video.h"
 #include "library/image/objectDetection.h"
@@ -51,6 +50,7 @@ frame dtn_frame;
 histogram hist;
 bool window_closed = false;
 double tld = .000001;   // detection threshold
+GLuint texture;
 
 class sliding_window {
   enum { SIZE = 10 };
@@ -148,25 +148,53 @@ bool main_loop_iter() {
 int main(int argc, char** argv) {
   setup_player();
   glSetupOpenGL(argc, argv);
+
   _beginthread(tcp_comm, 0, (void*)1);
+
+  ifstream training(TRAINING_FILE);
+  hist = load_histogram(training);
+
   while(main_loop_iter()) { }
-  return 0;
 }
 
 void glDisplay() {
-
+  const struct { float tu, tv; float x, y, z; } vertices[] = {
+    { 0.0f, 0.0f, -1.0f,-1.0f, 0.0f },
+    { 1.0f, 0.0f,  1.0f,-1.0f, 0.0f },
+    { 1.0f, 1.0f,  1.0f, 1.0f, 0.0f },
+    { 0.0f, 1.0f, -1.0f, 1.0f, 0.0f }
+  };
   moveObjects();
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
+  glPushMatrix();
+  glScaled(-1.0, -1.0, 1.0);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, dtn_frame.get_buffer_data());
+  glInterleavedArrays(GL_T2F_V3F, 0, vertices);
+  glDrawArrays(GL_QUADS, 0, 4);
+  glPopMatrix();
+
+  glPushMatrix();
+    glScaled(-1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glColor3f(1.0, 0.0, 0.0);
+    glPointSize(15.0);
+    auto cur = cursor_pos.value();
+      player.x = cur.x * 2. / WIDTH - 1;
+      // player.y = cur.y * 2. / HEIGHT - 1;
+    glBegin(GL_POINTS);
+      glVertex2d(cur.x * 2. / WIDTH - 1., cur.y * 2. / HEIGHT - 1.);
+    glEnd();
+  glPopMatrix();
+
   glTranslated(0.0, -0.75,-0.75);
   glRotated(180,0.0,1.0,0.0);
 
-// Movement and Rotation
   drawScene();
-
   glPushMatrix();
     player.Tx();
     drawAxes(0);

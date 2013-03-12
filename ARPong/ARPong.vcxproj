@@ -74,7 +74,6 @@
   <ItemGroup>
     <ClCompile Include="escapi.cpp" />
     <ClCompile Include="library\glut_draw.cpp" />
-    <ClCompile Include="library\glut_materials_lights.cpp" />
     <ClCompile Include="library\image\histogram.cpp" />
     <ClCompile Include="library\image\objectDetection.cpp" />
     <ClCompile Include="library\image\video.cpp" />
