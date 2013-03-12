@@ -75,6 +75,9 @@
     <ClCompile Include="escapi.cpp" />
     <ClCompile Include="library\glut_draw.cpp" />
     <ClCompile Include="library\glut_materials_lights.cpp" />
+    <ClCompile Include="library\image\histogram.cpp" />
+    <ClCompile Include="library\image\objectDetection.cpp" />
+    <ClCompile Include="library\image\video.cpp" />
     <ClCompile Include="library\player_class.cpp" />
     <ClCompile Include="library\tcp_client.cpp" />
     <ClCompile Include="library\tcp_server.cpp" />

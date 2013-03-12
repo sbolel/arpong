@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ARPong.h"
+#include "../../ARPong.h"
 
 #include <glm/glm.hpp>
 

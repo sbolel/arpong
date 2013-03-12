@@ -29,23 +29,29 @@
 
 using namespace std;
 
-// Global player variables
-player_class player(1);
-player_class enemy(2);
-player_class ball(3);
-
-
-GLfloat sun_direction[] = { 0.0, 2.0, -1.0, 1.0 };
-GLfloat sun_intensity[] = { 0.7, 0.7, 0.7, 1.0 };
-GLfloat ambient_intensity[] = { 0.3, 0.3, 0.3, 1.0 };
-
 const double pi = atan(1.0)*4.0;
 const double rad = (pi/180.0);
 const GLfloat moveSpeed=0.001;
-
+// Video variables
+const char* TRAINING_FILE = "../skin_rgb.txt";
+video_stream stream;
+frame dtn_frame;
+histogram hist;
+// Player variables
+player_class player(1);
+player_class enemy(2);
+player_class ball(3);
+// GLUT lighting variables
+GLfloat sun_direction[] = { 0.0, 2.0, -1.0, 1.0 };
+GLfloat sun_intensity[] = { 0.7, 0.7, 0.7, 1.0 };
+GLfloat ambient_intensity[] = { 0.3, 0.3, 0.3, 1.0 };
+// Control variables
 static int glutClearStatus = 1;
 static int glutAnimationStatus = 1;
 static bool key_state[256] = {false};
+bool window_closed = false;
+
+
 
 void updateClient(server_data sd){
   enemy.x = sd.x;

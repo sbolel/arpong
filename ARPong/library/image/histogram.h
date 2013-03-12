@@ -1,7 +1,7 @@
 #include <iosfwd>
 #include <vector>
 
-#include "ARPong.h"
+#include "../../ARPong.h"
 
 struct rgb { double r, g, b; };
 
