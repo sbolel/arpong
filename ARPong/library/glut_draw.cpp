@@ -28,51 +28,51 @@ void drawScene(void) {
 
   // Left wall
     glBegin(GL_QUADS);  // right
-      glColor3f(0.9, 0.6, 0.125);   // light brown
-      glVertex3f( 8.0, 0.3, 0.0);
-      glVertex3f( 8.0, -0.3, 0.0);
-      glVertex3f( 8.0, -0.3, 12.0);
-      glVertex3f( 8.0, 0.3, 12.0);
+      glColor3f(0.9f, 0.6f, 0.125f);   // light brown
+      glVertex3f( ARENA_WIDTH, 0.1f, 0.0f);
+      glVertex3f( ARENA_WIDTH, -0.1f, 0.0f);
+      glVertex3f( ARENA_WIDTH, -0.1f, ARENA_LENGTH);
+      glVertex3f( ARENA_WIDTH, 0.1f, ARENA_LENGTH);
     glEnd();
     glBegin(GL_QUADS);  // back
-      glColor3f(0.7, 0.3, 0.1);   // dark brown
-      glVertex3f( 8.0, 0.3, 0.0);
-      glVertex3f( 9.0, 0.3, 0.0);
-      glVertex3f( 9.0, -0.3, 0.0);
-      glVertex3f( 8.0, -0.3, 0.0);
+      glColor3f(0.7, 0.1f, 0.1);   // dark brown
+      glVertex3f( ARENA_WIDTH, 0.1f, 0.0f);
+      glVertex3f( ARENA_WIDTH+WALL_THICK, 0.1f, 0.0f);
+      glVertex3f( ARENA_WIDTH+WALL_THICK, -0.1f, 0.0f);
+      glVertex3f( ARENA_WIDTH, -0.1f, 0.0f);
     glEnd();
     glBegin(GL_QUADS);  // top
-      glColor3f(0.9, 0.6, 0.125);   // light brown
-      glVertex3f( 8.0, 0.3, 0.0);
-      glVertex3f( 8.0, 0.3, 12.0);
-      glVertex3f( 9.0, 0.3, 12.0);
-      glVertex3f( 9.0, 0.3, 0.0);
+      glColor3f(0.9f, 0.6f, 0.125f);   // light brown
+      glVertex3f( ARENA_WIDTH, 0.1f, 0.0f);
+      glVertex3f( ARENA_WIDTH, 0.1f, ARENA_LENGTH);
+      glVertex3f( ARENA_WIDTH+WALL_THICK, 0.1f, ARENA_LENGTH);
+      glVertex3f( ARENA_WIDTH+WALL_THICK, 0.1f, 0.0f);
     glEnd();
 
   // right wall
     glBegin(GL_QUADS);  // left
-      glColor3f(0.9, 0.6, 0.125);   // light brown
-      glVertex3f( -8.0, 0.3, 0.0);
-      glVertex3f( -8.0, -0.3, 0.0);
-      glVertex3f( -8.0, -0.3, 12.0);
-      glVertex3f( -8.0, 0.3, 12.0);
+      glColor3f(0.9f, 0.6f, 0.125f);   // light brown
+      glVertex3f( -ARENA_WIDTH, 0.1f, 0.0f);
+      glVertex3f( -ARENA_WIDTH, -0.1f, 0.0f);
+      glVertex3f( -ARENA_WIDTH, -0.1f, ARENA_LENGTH);
+      glVertex3f( -ARENA_WIDTH, 0.1f, ARENA_LENGTH);
     glEnd();
     glBegin(GL_QUADS);  // back
-      glColor3f(0.7, 0.3, 0.1);   // dark brown
-      glVertex3f( -8.0, 0.3, 0.0);
-      glVertex3f( -8.0, -0.3, 0.0);
-      glVertex3f( -9.0, -0.3, 0.0);
-      glVertex3f( -9.0, 0.3, 0.0);
+      glColor3f(0.7f, 0.1f, 0.1);   // dark brown
+      glVertex3f( -ARENA_WIDTH, 0.1f, 0.0f);
+      glVertex3f( -ARENA_WIDTH, -0.1f, 0.0f);
+      glVertex3f( -ARENA_WIDTH-WALL_THICK, -0.1f, 0.0f);
+      glVertex3f( -ARENA_WIDTH-WALL_THICK, 0.1f, 0.0f);
     glEnd();
     glBegin(GL_QUADS);  // top
-      glColor3f(0.9, 0.6, 0.125);   // light brown
-      glVertex3f( -8.0, 0.3, 0.0);
-      glVertex3f( -9.0, 0.3, 0.0);
-      glVertex3f( -9.0, 0.3, 12.0);
-      glVertex3f( -8.0, 0.3, 12.0);
+      glColor3f(0.9f, 0.6f, 0.125f);   // light brown
+      glVertex3f( -ARENA_WIDTH, 0.1f, 0.0f);
+      glVertex3f( -ARENA_WIDTH-WALL_THICK, 0.1f, 0.0f);
+      glVertex3f( -ARENA_WIDTH-WALL_THICK, 0.1f, ARENA_LENGTH);
+      glVertex3f( -ARENA_WIDTH, 0.1f, ARENA_LENGTH);
     glEnd();
     // glBegin(GL_QUADS);
-    //   glVertex3f( 5.0, 7.0, -50.0);
+    //   glVertex3f( 3.0, 7.0, -50.0);
     //   glVertex3f( -10.0, 6.0, -50.0);
     //   glVertex3f( -10.0, -6.0, -50.0);
     //   glVertex3f( 10.0, -6.0, -50.0);

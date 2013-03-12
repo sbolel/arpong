@@ -48,7 +48,7 @@ void setup_player(void) {
   getline(cin,id,'\n');
   player.id = std::stoi(id);
   ball.x = 0.0;
-  ball.z = 15.0;
+  ball.z = ARENA_LENGTH/2;
 }
 
 
@@ -68,7 +68,8 @@ void glDisplay() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-
+  glTranslated(0.0, -0.75,-0.75);
+  glRotated(180,0.0,1.0,0.0);
 
 // Movement and Rotation
   drawScene();
@@ -78,19 +79,19 @@ void glDisplay() {
     drawAxes(0);
 	glPopMatrix();
   glPushMatrix();
-    glTranslated(0.0,0.0,30.0);
+    glTranslated(0.0,0.0,ARENA_LENGTH);
     glRotated(180, 0.0,1.0,0.0);
     enemy.Tx();
     drawAxes(0);
   glPopMatrix();
   glPushMatrix();
-    glColor3f(0.0, 1.0, 0.25);
+    glColor3f(1.0, 1.0, 1.0);
     if(player.id==2) {
       glRotated(180, 0.0,1.0,0.0);
-      glTranslated(0.0,0.0,-30.0);
+      glTranslated(0.0,0.0,-ARENA_LENGTH);
     }
     ball.Txz();
-    glutSolidSphere(0.25, 20, 20);
+    glutSolidSphere(0.1, 20, 20);
     glScaled(0.7,0.7,0.7);
     drawAxes(0);
   glPopMatrix();
@@ -100,10 +101,10 @@ void glDisplay() {
 }
 
 void glReshape( int width, int height ) {
-  glViewport((WIDTH-HEIGHT)/2,0, HEIGHT, HEIGHT);
+  glViewport(0,0, WIDTH, HEIGHT);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective (45, (GLfloat)WIDTH / (GLfloat)HEIGHT, 1.0, 15.0);
+  gluPerspective (140.0, (WIDTH/HEIGHT), 0.5, ARENA_LENGTH+0.75f);
   glMatrixMode(GL_MODELVIEW);
   glutPostRedisplay();
 }
