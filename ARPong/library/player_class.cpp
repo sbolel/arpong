@@ -12,6 +12,7 @@ player_class::player_class(int player_id)
 	x_min = -ARENA_WIDTH;
   x_vel = 0.0f;
   z_vel = 0.0f;
+  score = 0;
 	if (player_id==3) {
 		z_min = 0.0;
 		z_max = ARENA_LENGTH;

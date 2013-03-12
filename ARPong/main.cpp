@@ -216,9 +216,8 @@ void glDisplay() {
       glTranslated(0.0,0.0,-ARENA_LENGTH);
     }
     ball.Txz();
+    glScaled(0.6,0.6,0.35);
     glutSolidSphere(0.1, 20, 20);
-    glScaled(0.7,0.7,0.7);
-    drawAxes(0);
   glPopMatrix();
 
 	glFlush();
@@ -358,7 +357,6 @@ void moveObjects(void){
   if (player.id==1) {
     resetBall();
     updateBall();
-    moveBall();
   }
   movePlayer();
 }
@@ -378,21 +376,6 @@ void moveEnemy(void) {
   }
   if(key_state['d'] == true) {
     enemy.xInc(moveSpeed);
-  }
-}
-
-void moveBall(void) {
-  if(key_state['j'] == true) {
-      ball.xInc(moveSpeed);
-  }
-  if(key_state['k'] == true) {
-      ball.xDec(moveSpeed);
-  }
-  if(key_state['i'] == true) {
-      ball.zInc(moveSpeed);
-  }
-  if(key_state['m'] == true) {
-      ball.zDec(moveSpeed);
   }
 }
 
@@ -426,4 +409,32 @@ void startBall(void) {
 void updateBall(void) {
   ball.z += ball.z_vel;
   ball.x += ball.x_vel;
+  checkCollision();
+  checkWinner();
+}
+
+void checkCollision(void) {
+  // enemy collision
+  if ((ball.z>=ARENA_LENGTH-0.1)&&(ball.z<=ARENA_LENGTH+0.1) && ( (ball.x<=(enemy.x+PL_W/2)) && (ball.x>=(enemy.x-PL_W/2)))) {
+    ball.z_vel *= -1.0;
+  }
+  // player collision
+  if ((ball.z>=-0.1)&&(ball.z<=+0.1) && ( (ball.x<=(player.x+PL_W/2)) && (ball.x>=(player.x-PL_W/2)))) {
+    ball.z_vel *= -1.0;
+  }
+}
+
+void checkWinner() {
+  if (ball.z>(ARENA_LENGTH+0.5)) {
+    player.score += 1;
+    scorer_id = player.id;
+    scored_status=1;
+    resetBall();
+  }
+  if (ball.z<(-0.5)) {
+    enemy.score += 1;
+    scorer_id = enemy.id;
+    scored_status=1;
+    resetBall();
+  }
 }
