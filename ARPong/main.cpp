@@ -52,6 +52,8 @@ public:
 
 sliding_window cursor_pos;
 
+glm::vec2 ball(0.0, 0.0), velocity(0.0, 1.0), accel(0.0, -1.0);
+
 // OpenGL display function, called whenever a new frame is requested
 void display() {
 	// vertices for simple textured-quad rendering
@@ -74,12 +76,19 @@ void display() {
 	glPushMatrix();
 	glScaled(-1.0, 1.0, 1.0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glColor3f(1.0, 0.0, 0.0);
-	glPointSize(5.0);
 
 	auto cur = cursor_pos.value();
+	auto cur_vec = glm::vec2(cur.x * 2. / WIDTH - 1, cur.y * 2. / HEIGHT - 1.);
+	glColor3f(1.0, 0.0, 0.0);
+	glBegin(GL_QUADS);
+		glVertex2f(cur_vec.x - 0.1, -0.8);
+		glVertex2f(cur_vec.x + 0.1, -0.8);
+		glVertex2f(cur_vec.x + 0.1, -0.9);
+		glVertex2f(cur_vec.x - 0.1, -0.9);
+	glEnd();
+	glPointSize(5.0);
 	glBegin(GL_POINTS);
-		glVertex2d(cur.x * 2. / WIDTH - 1., cur.y * 2. / HEIGHT - 1.);
+		glVertex2f(ball.x, ball.y);
 	glEnd();
 	glPopMatrix();
 
@@ -116,6 +125,32 @@ bool main_loop_iter() {
 
 		dtn_frame = detect_skin(stream.current_frame);
 		cursor_pos.push_value(calculate_median(dtn_frame));
+		auto cur = cursor_pos.value();
+		auto cur_vec = glm::vec2(cur.x * 2. / WIDTH - 1, cur.y * 2. / HEIGHT - 1.);
+
+		float time = 0.01;
+		velocity += accel * time;
+		ball += velocity * time;
+		if(ball.y < -0.8) {
+			if(std::abs(ball.x - cur_vec.x) < 0.1 && ball.y > -1) {
+				ball.y = -0.8;
+				velocity *= -1;
+				velocity.x += ball.x - cur_vec.x;
+			}
+			else {
+				cout << "You lose!\n";
+				ball = glm::vec2(0, 0);
+				velocity = glm::vec2(0, 1);
+			}
+		}
+		if(ball.x < -1) {
+			ball.x = -1;
+			velocity.x *= -1;
+		}
+		if(ball.x > 1) {
+			ball.x = 1;
+			velocity.x *= -1;
+		}
 
 		// Tell GLUT to render this frame and manually proceed to the next one
 		glutPostRedisplay();
