@@ -25,22 +25,54 @@ void drawAxes(int colr){
 
 void drawScene(void) {
   glPushMatrix();
-    glBegin(GL_QUADS);
-      glColor3f(0.0, 0.25, 0.8);
-      glVertex3f( 5.0, 2.0, 0.0);
-      glVertex3f( 5.0, -2.0, 0.0);
-      glVertex3f( 5.0, -2.0, 30.0);
-      glVertex3f( 5.0, 2.0, 30.0);
+
+  // Left wall
+    glBegin(GL_QUADS);  // right
+      glColor3f(0.9, 0.6, 0.125);   // light brown
+      glVertex3f( 8.0, 0.3, 0.0);
+      glVertex3f( 8.0, -0.3, 0.0);
+      glVertex3f( 8.0, -0.3, 12.0);
+      glVertex3f( 8.0, 0.3, 12.0);
     glEnd();
-    glBegin(GL_QUADS);
-      glColor3f(0.0, 0.25, 0.8);
-      glVertex3f( -5.0, 2.0, 0.0);
-      glVertex3f( -5.0, -2.0, 0.0);
-      glVertex3f( -5.0, -2.0, 30.0);
-      glVertex3f( -5.0, 2.0, 30.0);
+    glBegin(GL_QUADS);  // back
+      glColor3f(0.7, 0.3, 0.1);   // dark brown
+      glVertex3f( 8.0, 0.3, 0.0);
+      glVertex3f( 9.0, 0.3, 0.0);
+      glVertex3f( 9.0, -0.3, 0.0);
+      glVertex3f( 8.0, -0.3, 0.0);
+    glEnd();
+    glBegin(GL_QUADS);  // top
+      glColor3f(0.9, 0.6, 0.125);   // light brown
+      glVertex3f( 8.0, 0.3, 0.0);
+      glVertex3f( 8.0, 0.3, 12.0);
+      glVertex3f( 9.0, 0.3, 12.0);
+      glVertex3f( 9.0, 0.3, 0.0);
+    glEnd();
+
+  // right wall
+    glBegin(GL_QUADS);  // left
+      glColor3f(0.9, 0.6, 0.125);   // light brown
+      glVertex3f( -8.0, 0.3, 0.0);
+      glVertex3f( -8.0, -0.3, 0.0);
+      glVertex3f( -8.0, -0.3, 12.0);
+      glVertex3f( -8.0, 0.3, 12.0);
+    glEnd();
+    glBegin(GL_QUADS);  // back
+      glColor3f(0.7, 0.3, 0.1);   // dark brown
+      glVertex3f( -8.0, 0.3, 0.0);
+      glVertex3f( -8.0, -0.3, 0.0);
+      glVertex3f( -9.0, -0.3, 0.0);
+      glVertex3f( -9.0, 0.3, 0.0);
+    glEnd();
+    glBegin(GL_QUADS);  // top
+      glColor3f(0.9, 0.6, 0.125);   // light brown
+      glVertex3f( -8.0, 0.3, 0.0);
+      glVertex3f( -9.0, 0.3, 0.0);
+      glVertex3f( -9.0, 0.3, 12.0);
+      glVertex3f( -8.0, 0.3, 12.0);
     glEnd();
     // glBegin(GL_QUADS);
-    //   glVertex3f( 10.0, 6.0, -50.0);
+    //   glVertex3f( 5.0, 7.0, -50.0);
     //   glVertex3f( -10.0, 6.0, -50.0);
     //   glVertex3f( -10.0, -6.0, -50.0);
     //   glVertex3f( 10.0, -6.0, -50.0);

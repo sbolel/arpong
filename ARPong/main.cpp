@@ -65,13 +65,14 @@ void glDisplay() {
   moveObjects();
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+  glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0.0f, 0.0f, -2.0f,
-            0.0f, 0.0f,  30.0f,
-            0.0f, 1.0f,  2.0f);
+
+
 
 // Movement and Rotation
   drawScene();
+
   glPushMatrix();
     player.Tx();
     drawAxes(0);
@@ -98,43 +99,13 @@ void glDisplay() {
 	glutSwapBuffers();
 }
 
-void moveObjects(void){
-  if (player.id==1)
-    moveBall();
-  movePlayer();
-}
-
-void movePlayer(void) {
-  if(key_state['a'] == true) {
-    player.xInc(moveSpeed);
-  }
-  if(key_state['s'] == true) {
-    player.xDec(moveSpeed);
-  }
-}
-
-void moveEnemy(void) {
-  if(key_state['f'] == true) {
-    enemy.xDec(moveSpeed);
-  }
-  if(key_state['d'] == true) {
-    enemy.xInc(moveSpeed);
-  }
-}
-
-void moveBall(void) {
-  if(key_state['j'] == true) {
-      ball.x += moveSpeed;
-  }
-  if(key_state['k'] == true) {
-      ball.x -= moveSpeed;
-  }
-  if(key_state['i'] == true) {
-      ball.z += moveSpeed;
-  }
-  if(key_state['m'] == true) {
-      ball.z -= moveSpeed;
-  }
+void glReshape( int width, int height ) {
+  glViewport((WIDTH-HEIGHT)/2,0, HEIGHT, HEIGHT);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective (45, (GLfloat)WIDTH / (GLfloat)HEIGHT, 1.0, 15.0);
+  glMatrixMode(GL_MODELVIEW);
+  glutPostRedisplay();
 }
 
 void glKeyboard(unsigned char key, int xw, int yw) {
@@ -192,15 +163,6 @@ void drawText2D(void *pFont, double x0, double y0, const char *pString) {
   }
 }
 
-void glReshape( int width, int height ) {
-  glViewport((WIDTH-HEIGHT)/2,0, HEIGHT, HEIGHT);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective (45, (GLfloat)WIDTH / (GLfloat)HEIGHT, 1.0, 1000.0);
-  glMatrixMode(GL_MODELVIEW);
-  glutPostRedisplay();
-}
-
 void glHidden (int isVisible) {
     if(isVisible == GLUT_VISIBLE)
       glRunTimer(1);
@@ -252,4 +214,43 @@ void glSetupOpenGL(int argc, char** argv) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glClearColor(0.03, 0.03, 0.2, 0.0);
   glRunTimer(1);
+}
+
+void moveObjects(void){
+  if (player.id==1)
+    moveBall();
+  movePlayer();
+}
+
+void movePlayer(void) {
+  if(key_state['a'] == true) {
+    player.xInc(moveSpeed);
+  }
+  if(key_state['s'] == true) {
+    player.xDec(moveSpeed);
+  }
+}
+
+void moveEnemy(void) {
+  if(key_state['f'] == true) {
+    enemy.xDec(moveSpeed);
+  }
+  if(key_state['d'] == true) {
+    enemy.xInc(moveSpeed);
+  }
+}
+
+void moveBall(void) {
+  if(key_state['j'] == true) {
+      ball.x += moveSpeed;
+  }
+  if(key_state['k'] == true) {
+      ball.x -= moveSpeed;
+  }
+  if(key_state['i'] == true) {
+      ball.z += moveSpeed;
+  }
+  if(key_state['m'] == true) {
+      ball.z -= moveSpeed;
+  }
 }
