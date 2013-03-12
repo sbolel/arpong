@@ -15,6 +15,8 @@ public:
   GLint   score;
   GLfloat x_vel;
   GLfloat z_vel;
+  GLint x_cnt;
+  GLfloat x_last;
 
   ~player_class(void);
    player_class(void);

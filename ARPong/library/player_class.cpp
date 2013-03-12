@@ -23,6 +23,7 @@ void player_class::reset(void)
 {
 	x = 0.0;
 	z = 0.0;
+	x_cnt = 0;
 }
 
 void player_class::Tx(void)

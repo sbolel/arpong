@@ -187,7 +187,16 @@ void glDisplay() {
     glColor3f(1.0, 0.0, 0.0);
     glPointSize(15.0);
     auto cur = cursor_pos.value();
+      if (player.x_cnt>=100){
+        player.x_last = player.x;
+        player.x_cnt=0;
+      }
       player.x = cur.x * 2. / WIDTH - 1;
+      player.x_cnt += 1;
+      if (player.x_last>player.x)
+        player.x_vel = 1.0;
+      if (player.x_last<player.x)
+        player.x_vel = -1.0;
       // player.y = cur.y * 2. / HEIGHT - 1;
     glBegin(GL_POINTS);
       glVertex2d(cur.x * 2. / WIDTH - 1., cur.y * 2. / HEIGHT - 1.);
