@@ -24,6 +24,7 @@
 #include "library/glut_materials_lights.h"
 #include "library/image/histogram.h"
 #include "library/image/video.h"
+#include "library/image/objectDetection.h"
 
 
 using namespace std;
