@@ -13,7 +13,6 @@ public:
 	double value(const rgb& color);
 	void increment_value(const rgb& color);
 	void normalize();
-	void print() const;
 
 private:
 	std::vector<std::vector<double>> h_;
