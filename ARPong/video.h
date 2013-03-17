@@ -7,8 +7,6 @@ public:
 	video_stream();
 	~video_stream();
 
-	rgb_byte get_pix(int x, int y) const;
-	void set_pix(int x, int y, const rgb_byte& pix);
 	bool next_frame();
 	void cleanup();
 
