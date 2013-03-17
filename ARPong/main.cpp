@@ -81,14 +81,14 @@ void display() {
 	auto cur_vec = glm::vec2(cur.x * 2. / WIDTH - 1, cur.y * 2. / HEIGHT - 1.);
 	glColor3f(1.0, 0.0, 0.0);
 	glBegin(GL_QUADS);
-		glVertex2f(cur_vec.x - 0.1, -0.8);
-		glVertex2f(cur_vec.x + 0.1, -0.8);
-		glVertex2f(cur_vec.x + 0.1, -0.9);
-		glVertex2f(cur_vec.x - 0.1, -0.9);
+		glVertex2d(cur_vec.x - 0.1, -0.8);
+		glVertex2d(cur_vec.x + 0.1, -0.8);
+		glVertex2d(cur_vec.x + 0.1, -0.9);
+		glVertex2d(cur_vec.x - 0.1, -0.9);
 	glEnd();
 	glPointSize(5.0);
 	glBegin(GL_POINTS);
-		glVertex2f(ball.x, ball.y);
+		glVertex2d(ball.x, ball.y);
 	glEnd();
 	glPopMatrix();
 
@@ -128,12 +128,12 @@ bool main_loop_iter() {
 		auto cur = cursor_pos.value();
 		auto cur_vec = glm::vec2(cur.x * 2. / WIDTH - 1, cur.y * 2. / HEIGHT - 1.);
 
-		float time = 0.01;
+		float time = 0.04f;
 		velocity += accel * time;
 		ball += velocity * time;
 		if(ball.y < -0.8) {
 			if(std::abs(ball.x - cur_vec.x) < 0.1 && ball.y > -1) {
-				ball.y = -0.8;
+				ball.y = -0.8f;
 				velocity *= -1;
 				velocity.x += ball.x - cur_vec.x;
 			}
